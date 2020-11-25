@@ -1,0 +1,95 @@
+<style>
+  #myProgress {
+    width: 100%;
+    background-color: #ddd;
+  }
+
+  #myBar {
+    width: 1%;
+    height: 30px;
+    background-color: #46c7f2;
+  }
+</style>
+<h1 class="mt-4">Student Dashboard</h1>
+<p class="lead mb-3">Welcome <%= user.name %></p>
+<br>
+<div>
+  <h1 id='userRank'></h1>
+  <h1>XP: <%= user.xp %></h1>
+  <p id='XP-Till'></p>
+</div>
+<br>
+<div>
+</div>
+<div>
+  <p stlye='text-align: right;' id='percent'></p>
+  <div id="myProgress">
+    <div id="myBar"></div>
+  </div>
+</div>
+<br>
+<a href="/users/logout" class="btn btn-secondary">Logout</a>
+<script>
+  let xp = <%= user.xp %>;
+  let currRank;
+  let rankUp;
+  let remain;
+
+  let ranks = [
+    {"Digital Noob": 0}, // index 0
+    {"Digital Novice": 48}, // index 1
+    {"Digital Novice II": 100}, // index 2
+    {"Digital Amature": 148}, // index 3
+    {"Digital Amature II": 200}, // index 4
+    {"Digital Apprentice": 248}, // index 5
+    {"Digital Apprentice II": 300}, // index 6
+    {"Digital Journeyman": 396}, // index 7
+    {"Digital Journeyman II": 476}, // index 8
+    {"Digital Journeyman III": 532}, // index 9
+    {"Digital Crafter": 580}, // index 10
+    {"Expert Digital Crafter": 648}, // index 11
+    {"Master Digital Crafter": 800} // index 12
+  ]
+
+  // Get current rank
+  let indexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12]
+  if (xp < 800) {
+    for(var i = 0; i < ranks.length; i++) {
+      for (let rank in ranks[i]) {
+        let nextIndex = indexes[i];
+        for (let nextRank in ranks[nextIndex]) {
+          if (xp >= ranks[i][rank] && xp < ranks[nextIndex][nextRank]) {
+            currRank = rank;
+            currRankXP = ranks[i][rank]
+            // Calculate xp till next Rank
+            if (i < 12) {
+              i++;
+              let nextRank = ranks[i];
+              for (let r in nextRank) {
+                  let goal = nextRank[r];
+                  rankUp = r;
+                  remain = goal - xp;
+                  // Calculate progress bar
+                  let total = goal - currRankXP;
+                  let progress = xp - currRankXP;
+                  let percent = (progress/total)*100;
+                  let elem = document.getElementById("myBar");
+                  elem.style.width = percent + '%';
+                  document.getElementById('percent').innerHTML = progress + '|' + total;
+              }
+            }
+          }
+        }
+      }
+    }
+  } else {
+    currRank = "Master Digital Crafter";
+    remain = 0;
+    rankUp = 'No higher Rank, Good Job!';
+  }
+
+  //Show Data
+  document.getElementById('userRank').innerHTML = currRank;
+  document.getElementById('XP-Till').innerHTML = remain + 'XP till your next Rank: ' + rankUp;
+
+</script>

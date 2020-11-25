@@ -1,0 +1,6 @@
+<% if (user.role == "Teacher") { %>
+  <% include teacherDashboard %>
+<% } %>
+<% if (user.role == "Student") { %>
+  <% include studentDashboard %>
+<% } %>
