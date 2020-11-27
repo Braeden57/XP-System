@@ -1,6 +1,7 @@
 <style>
   .members {
     width: 230px;
+    display: inline-block;
   }
 
   h2 {
@@ -47,65 +48,78 @@
 <br>
 <a href="/users/logout" class="btn btn-secondary">Logout</a>
 <br>
-<h2>Site Members</h2>
-<div class='members'>
-  <ul>
-    <% members.forEach(function (member) { %>
-      <li><button class='btn btn-link mt-2' onclick='openProfile("<%= member.id %>")'><%= member.name %></button></li>
-      <div style='display: none;' data-role='page' id='<%= member._id %>'>
-        <p class="lead mb-3"><%= member.name %></p>
-        <p class='lead mb-3'><%= member.email %></p>
-        <br>
-        <div>
-          <p id='userRank'></p>
-          <p>XP: <%= member.xp %></p>
-          <p><%= member.role %></p>
-        </div>
-        <br>
-        <script>
-          let xp = <%= member.xp %>;
-          let currRank;
+<div>
+  <script>
+    let xp;
+    let currRank;
+    let ranks = [
+      {"Digital Noob": 0}, // index 0
+      {"Digital Novice": 48}, // index 1
+      {"Digital Novice II": 100}, // index 2
+      {"Digital Amature": 148}, // index 3
+      {"Digital Amature II": 200}, // index 4
+      {"Digital Apprentice": 248}, // index 5
+      {"Digital Apprentice II": 300}, // index 6
+      {"Digital Journeyman": 396}, // index 7
+      {"Digital Journeyman II": 476}, // index 8
+      {"Digital Journeyman III": 532}, // index 9
+      {"Digital Crafter": 580}, // index 10
+      {"Expert Digital Crafter": 648}, // index 11
+      {"Master Digital Crafter": 800} // index 12
+    ]
+    let indexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12]
+    console.log("Students Shouldnt be here");
+  </script>
+  <h2>Site Members</h2>
+  <div class='members'>
+    <ul>
+      <% members.forEach(function (member) { %>
+        <% if (member.role == "Student") { %>
+          <li><button class='btn btn-link mt-2' onclick='openProfile("<%= member.id %>")'><%= member.name %></button></li>
+          <div style='display: none;' data-role='page' id='<%= member._id %>'>
+            <p class="lead mb-3"><%= member.name %></p>
+            <p class='lead mb-3'><%= member.email %></p>
+            <br>
+            <div>
+              <p id='userRank-<%= member.id %>'></p>
+              <p>XP: <%= member.xp %></p>
+              <p><%= member.role %></p>
+            </div>
+            <br>
+            <script>
+              xp = <%= member.xp %>;
 
-          let ranks = [
-            {"Digital Noob": 0}, // index 0
-            {"Digital Novice": 48}, // index 1
-            {"Digital Novice II": 100}, // index 2
-            {"Digital Amature": 148}, // index 3
-            {"Digital Amature II": 200}, // index 4
-            {"Digital Apprentice": 248}, // index 5
-            {"Digital Apprentice II": 300}, // index 6
-            {"Digital Journeyman": 396}, // index 7
-            {"Digital Journeyman II": 476}, // index 8
-            {"Digital Journeyman III": 532}, // index 9
-            {"Digital Crafter": 580}, // index 10
-            {"Expert Digital Crafter": 648}, // index 11
-            {"Master Digital Crafter": 800} // index 12
-          ]
-
-          // Get current rank
-          let indexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12]
-          if (xp < 800) {
-            for(var i = 0; i < ranks.length; i++) {
-              for (let rank in ranks[i]) {
-                let nextIndex = indexes[i];
-                for (let nextRank in ranks[nextIndex]) {
-                  if (xp >= ranks[i][rank] && xp < ranks[nextIndex][nextRank]) {
-                    currRank = rank;
+              // Get current rank
+              if (xp == 0) {
+                currRank = 'Digital Noob';
+              } else {
+                if (xp < 800 && xp > 0) {
+                  for(var i = 0; i < ranks.length; i++) {
+                    for (let rank in ranks[i]) {
+                      let nextIndex = indexes[i];
+                      for (let nextRank in ranks[nextIndex]) {
+                        if (xp >= ranks[i][rank] && xp < ranks[nextIndex][nextRank]) {
+                          currRank = rank;
+                        }
+                      }
+                    }
+                  }
+                } else {
+                  if (xp == 800) {
+                      currRank = "Master Digital Crafter";
                   }
                 }
               }
-            }
-          } else {
-            currRank = "Master Digital Crafter";
-          }
 
-          //Show Data
-          document.getElementById('userRank').innerHTML = currRank;
+              //Show Data
+              document.getElementById('userRank-<%= member.id %>').innerHTML = currRank;
 
-        </script>
-      </div>
-    <% }) %>
-  </ul>
+            </script>
+          </div>
+        <% } %>
+      <% }) %>
+    </ul>
+  </div>
 </div>
 <script>
   function openProfile(id) {
