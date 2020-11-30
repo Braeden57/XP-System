@@ -4,6 +4,10 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const flash = require('connect-flash');
 const session = require('express-session');
+const fs = require('fs');
+const bodyParser = require('body-parser');
+const path = require('path');
+require('dotenv/config');
 
 const app = express();
 
@@ -14,8 +18,7 @@ require('./config/passport')(passport);
 const db = require('./config/keys').mongoURI;
 
 // Connect to MongoDB
-mongoose
-  .connect(
+mongoose.connect(
     db,
     { useNewUrlParser: true ,useUnifiedTopology: true}
   )
@@ -26,8 +29,9 @@ mongoose
 app.use(expressLayouts);
 app.set('view engine', 'ejs');
 
-// Express body parser
-app.use(express.urlencoded({ extended: true }));
+// Body parser
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 // Express session
 app.use(

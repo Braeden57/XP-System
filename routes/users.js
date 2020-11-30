@@ -6,14 +6,32 @@ const passport = require('passport');
 const User = require('../models/User');
 const { forwardAuthenticated } = require('../config/auth');
 
+const fs = require('fs');
+const path = require('path');
+const multer = require('multer');
+
+let storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'routes/uploads')
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + '-' + Date.now())
+  }
+});
+
+let upload = multer({ storage: storage });
+
 // Login Page
 router.get('/login', forwardAuthenticated, (req, res) => res.render('login'));
 
 // Register Page
 router.get('/register', forwardAuthenticated, (req, res) => res.render('register'));
 
+// Edit page
+router.get('/edit', (req, res) => res.render('edit'));
+
 // Register
-router.post('/register', (req, res) => {
+router.post('/register', upload.single('image'), (req, res, next) => {
   const { name, email, password, password2 } = req.body;
   let errors = [];
 
@@ -51,8 +69,12 @@ router.post('/register', (req, res) => {
       } else {
         const newUser = new User({
           name,
+          image: {
+            data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
+            contentType: 'image/png'
+          },
           email,
-          password
+          password,
         });
 
         bcrypt.genSalt(10, (err, salt) => {
