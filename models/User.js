@@ -13,6 +13,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  image: {
+    data: Buffer,
+    contentType: String
+  },
   role: {
     type: String,
     default: 'Student'

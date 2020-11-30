@@ -1,13 +1,29 @@
 <style>
   #myProgress {
-    width: 100%;
+    position: relative;
+    height: 150px;
+    width: 150px;
     background-color: #ddd;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, .5);
   }
 
   #myBar {
-    width: 1%;
-    height: 30px;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 145px;
+    height: 1%;
     background-color: #46c7f2;
+  }
+
+  #pro-pic {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    width: 100px;
+    display: block;
+    border-radius: 50px;
   }
 </style>
 <h1 class="mt-4">Student Dashboard</h1>
@@ -25,10 +41,13 @@
   <p stlye='text-align: right;' id='percent'></p>
   <div id="myProgress">
     <div id="myBar"></div>
+    <img id='pro-pic' src='data:image/<%=user.image.contentType%>;base64,
+                     <%=user.image.data.toString('base64')%>'>
   </div>
 </div>
 <br>
 <a href="/users/logout" class="btn btn-secondary">Logout</a>
+<a href='/users/edit' class='btn btn-secondary'>Edit</a>
 <script>
   let xp = <%= user.xp %>;
   let currRank;
@@ -74,7 +93,7 @@
                   let progress = xp - currRankXP;
                   let percent = (progress/total)*100;
                   let elem = document.getElementById("myBar");
-                  elem.style.width = percent + '%';
+                  elem.style.height = percent + '%';
                   document.getElementById('percent').innerHTML = progress + '|' + total;
               }
             }
