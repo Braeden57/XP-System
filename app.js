@@ -1,3 +1,4 @@
+// Import required libraries
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
 const mongoose = require('mongoose');
@@ -63,4 +64,5 @@ app.use('/users', require('./routes/users.js'));
 
 const PORT = process.env.PORT || 5000;
 
+// Start Server
 app.listen(PORT, console.log(`Server started on port ${PORT}`));
