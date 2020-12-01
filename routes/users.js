@@ -30,59 +30,6 @@ router.get('/login', forwardAuthenticated, (req, res) => res.render('login'));
 // Register Page
 router.get('/register', forwardAuthenticated, (req, res) => res.render('register'));
 
-// Edit page
-router.get('/edit', (req, res) => res.render('edit'));
-
-// Edit
-router.post('/edit', upload.single('image'), (req, res, next) => {
-  // Gets inputs
-  const { _id, name, currPassword, newPassword, newPassword2 } = req.body;
-  let errors = [];
-
-  // Get specified user from db
-  let currUser = User.findOne({ _id });
-
-  // Checks if blank
-  // if (!name || !email || !currPassword || !newPassword || !newPassword2) {
-  //   errors.push({ msg: 'Please enter all fields' });
-  // }
-
-  // Checks if new password & new password confirm match
-  if (newPassword != newPassword2) {
-    errors.push({ msg: 'New Passwords do not match' });
-  }
-
-  // Validates new password is required lenght
-  if (newPassword.length < 6) {
-    errors.push({ msg: 'Password must be at least 6 characters' });
-  }
-
-  // Error Handling
-  if (errors.length > 0) {
-    // Redirects to edit page with errors
-    res.render('edit', {
-      errors,
-      name,
-      currPassword,
-      newPassword,
-      newPassword2
-    });
-  } else {
-      //creates updated user object
-      let obj = {
-        name: name,
-        image: {
-          data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
-          contentType: 'image/png'
-        },
-        password: newPassword
-      }
-      //Updates user and redirects to dashboard
-      User.updateOne({ _id }, { $set: obj});
-      res.redirect('/dashboard');
-  }
-});
-
 // Register
 router.post('/register', upload.single('image'), (req, res, next) => {
   // Collects input
