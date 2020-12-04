@@ -16,13 +16,4 @@ router.get('/dashboard', ensureAuthenticated, function(req, res) {
     });
 });
 
-// Member Profile
-router.get('/profile', ensureAuthenticated, function(req, res) {
-  UserModel.find({}, function(err, data) {
-    res.render('profile', {
-      memberProfile: req.eachMember
-    });
-  });
-});
-
 module.exports = router;

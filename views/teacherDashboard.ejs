@@ -1,53 +1,98 @@
+<!-- Simple Styling for layout -->
 <style>
   .members {
     width: 230px;
     display: inline-block;
   }
-
+  .head {
+    margin-bottom: 100px;
+  }
+  #teacher-container {
+      position: relative;
+  }
+  #pro-pic {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100px;
+    display: block;
+    border-radius: 50px;
+    border: 1px solid black;
+    margin:5px;
+  }
+  #user-pro-pic {
+    position: absolute;
+    top: 0px;
+    left: 150px;
+    width: 50px;
+    height: 50px;
+    display: block;
+    border-radius: 50px;
+    border: 1px solid black;
+    margin:5px;
+  }
+  #logout-btn {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+  }
+  #welcome {
+    position: absolute;
+    left: 115px;
+    top: 60px;
+  }
   h2 {
     font: 350 35px/1.5 Helvetica, Verdana, sans-serif;
     margin: 0;
     padding: 0;
   }
-
   ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
   }
-
   li {
     font: 200 20px/1.5 Helvetica, Verdana, sans-serif;
     border-bottom: 1px solid #ccc;
   }
-
   li:last-child {
     border: none;
   }
-
   li a {
     text-decoration: none;
     color: #000;
     display: block;
     width: 200px;
-
     -webkit-transition: font-size 0.3s ease, background-color 0.3s ease;
     -moz-transition: font-size 0.3s ease, background-color 0.3s ease;
     -o-transition: font-size 0.3s ease, background-color 0.3s ease;
     -ms-transition: font-size 0.3s ease, background-color 0.3s ease;
     transition: font-size 0.3s ease, background-color 0.3s ease;
   }
-
   li a:hover {
     font-size: 30px;
     background: #f6f6f6;
   }
 </style>
+
+<!-- Welcome Message & Profile Picture -->
 <h1 class="mt-4">Teacher Dashboard</h1>
-<p class="lead mb-3">Welcome <%= user.name %></p>
+<div class='head'>
+  <div id='teacher-container'>
+    <div>
+      <p id='welcome' class="lead mb-3">Welcome <%= user.name %></p>
+      <img id='pro-pic' src='data:image/<%=user.image.contentType%>;base64,
+        <%=user.image.data.toString('base64')%>'>
+    </div>
+    <br>
+
+    <!-- Action Buttons -->
+    <a id='logout-btn' href="/users/logout" class="btn btn-secondary">Logout</a>
+  </div>
+</div>
 <br>
-<a href="/users/logout" class="btn btn-secondary">Logout</a>
-<br>
+
+<!-- Sets Variables for calculating users data -->
 <div>
   <script>
     let xp;
@@ -68,16 +113,24 @@
       {"Master Digital Crafter": 800} // index 12
     ]
     let indexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12]
+    // Students should't be on this page sooooo...
     console.log("Students Shouldnt be here");
   </script>
+
+  <!-- List of all site students (not teachers) -->
   <h2>Site Members</h2>
   <div class='members'>
     <ul>
+      <!-- Loops through all members -->
       <% members.forEach(function (member) { %>
+        <!-- Identifies students -->
         <% if (member.role == "Student") { %>
+          <!-- Creates User Button link -->
           <li><button class='btn btn-link mt-2' onclick='openProfile("<%= member.id %>")'><%= member.name %></button></li>
-          <div style='display: none;' data-role='page' id='<%= member._id %>'>
-            <p class="lead mb-3"><%= member.name %></p>
+          <!-- Creates hidden Div with user specific Data -->
+          <div style='display: none; position: relative;' data-role='page' id='<%= member._id %>'>
+            <img id='user-pro-pic' src='data:image/<%=member.image.contentType%>;base64,<%=member.image.data.toString('base64')%>'>
+            <p id='memberName' class='lead mb-3'><%= member.name %></p>
             <p class='lead mb-3'><%= member.email %></p>
             <br>
             <div>
@@ -86,9 +139,9 @@
               <p><%= member.role %></p>
             </div>
             <br>
+            <!-- Calculates user specific Rank -->
             <script>
               xp = <%= member.xp %>;
-
               // Get current rank
               if (xp == 0) {
                 currRank = 'Digital Noob';
@@ -110,10 +163,8 @@
                   }
                 }
               }
-
-              //Show Data
+              // Display Rank
               document.getElementById('userRank-<%= member.id %>').innerHTML = currRank;
-
             </script>
           </div>
         <% } %>
@@ -121,6 +172,8 @@
     </ul>
   </div>
 </div>
+
+<!-- Script for show/hide user profile data -->
 <script>
   function openProfile(id) {
     let state = document.getElementById(id).style.display;

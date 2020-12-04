@@ -1,34 +1,68 @@
+<!-- Simple Syling for layout -->
 <style>
   #myProgress {
-    width: 100%;
+    position: relative;
+    height: 150px;
+    width: 150px;
     background-color: #ddd;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, .5);
   }
 
   #myBar {
-    width: 1%;
-    height: 30px;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 145px;
+    height: 1%;
     background-color: #46c7f2;
   }
+
+  #pro-pic {
+    position: absolute;
+    margin: 27px;
+    width: 90px;
+    height: 90px;
+    display: block;
+    border-radius: 50px;
+  }
 </style>
+
+<!-- Welcome message & Profile Picture/Progress bar -->
 <h1 class="mt-4">Student Dashboard</h1>
 <p class="lead mb-3">Welcome <%= user.name %></p>
+<div>
+  <div id="myProgress">
+    <div id="myBar"></div>
+    <img id='pro-pic' src='data:image/<%= user.image.contentType %>;base64,
+                     <%=user.image.data.toString('base64')%>'>
+  </div>
+  <p stlye='text-align: right;' id='percent'></p>
+</div>
 <br>
+
+<!-- User Data -->
 <div>
   <h1 id='userRank'></h1>
   <h1>XP: <%= user.xp %></h1>
   <p id='XP-Till'></p>
 </div>
 <br>
-<div>
-</div>
-<div>
-  <p stlye='text-align: right;' id='percent'></p>
-  <div id="myProgress">
-    <div id="myBar"></div>
-  </div>
-</div>
 <br>
+
+<!-- Action Buttons -->
 <a href="/users/logout" class="btn btn-secondary">Logout</a>
+<button onClick='passData()' class='btn btn-secondary'>Edit</button>
+<!-- Passing user _id to edit page script -->
+<script>
+  function passData() {
+    let url = '/users/edit?name=' + encodeURIComponent('<%= user._id %>');
+
+    document.location.href = url;
+  }
+</script>
+
+<!-- Calculate Rank Data Script -->
 <script>
   let xp = <%= user.xp %>;
   let currRank;
@@ -74,7 +108,7 @@
                   let progress = xp - currRankXP;
                   let percent = (progress/total)*100;
                   let elem = document.getElementById("myBar");
-                  elem.style.width = percent + '%';
+                  elem.style.height = percent + '%';
                   document.getElementById('percent').innerHTML = progress + '|' + total;
               }
             }
@@ -83,12 +117,14 @@
       }
     }
   } else {
+    // Display data for max level
+    document.getElementById('percent').innerHTML = '800|800';
     currRank = "Master Digital Crafter";
     remain = 0;
     rankUp = 'No higher Rank, Good Job!';
   }
 
-  //Show Data
+  // Display Data
   document.getElementById('userRank').innerHTML = currRank;
   document.getElementById('XP-Till').innerHTML = remain + 'XP till your next Rank: ' + rankUp;
 
