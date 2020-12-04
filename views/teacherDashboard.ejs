@@ -4,15 +4,12 @@
     width: 230px;
     display: inline-block;
   }
-
   .head {
     margin-bottom: 100px;
   }
-
   #teacher-container {
       position: relative;
   }
-
   #pro-pic {
     position: absolute;
     top: 0px;
@@ -23,18 +20,17 @@
     border: 1px solid black;
     margin:5px;
   }
-
   #user-pro-pic {
     position: absolute;
     top: 0px;
     left: 150px;
     width: 50px;
+    height: 50px;
     display: block;
     border-radius: 50px;
     border: 1px solid black;
     margin:5px;
   }
-
   #logout-btn {
     position: absolute;
     top: 0px;
@@ -45,41 +41,34 @@
     left: 115px;
     top: 60px;
   }
-
   h2 {
     font: 350 35px/1.5 Helvetica, Verdana, sans-serif;
     margin: 0;
     padding: 0;
   }
-
   ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
   }
-
   li {
     font: 200 20px/1.5 Helvetica, Verdana, sans-serif;
     border-bottom: 1px solid #ccc;
   }
-
   li:last-child {
     border: none;
   }
-
   li a {
     text-decoration: none;
     color: #000;
     display: block;
     width: 200px;
-
     -webkit-transition: font-size 0.3s ease, background-color 0.3s ease;
     -moz-transition: font-size 0.3s ease, background-color 0.3s ease;
     -o-transition: font-size 0.3s ease, background-color 0.3s ease;
     -ms-transition: font-size 0.3s ease, background-color 0.3s ease;
     transition: font-size 0.3s ease, background-color 0.3s ease;
   }
-
   li a:hover {
     font-size: 30px;
     background: #f6f6f6;
@@ -139,7 +128,7 @@
         <% if (member.role == "Student") { %>
           <!-- Creates User Button link -->
           <li><button class='btn btn-link mt-2' onclick='openProfile("<%= member.id %>")'><%= member.name %></button></li>
-
+          
           <!-- Creates hidden Div with user specific Data -->
           <div style='display: none; position: relative;' data-role='page' id='<%= member._id %>'>
             <img id='user-pro-pic' src='data:image/<%=member.image.contentType%>;base64,<%=member.image.data.toString('base64')%>'>
@@ -156,7 +145,6 @@
             <!-- Calculates user specific Rank -->
             <script>
               xp = <%= member.xp %>;
-
               // Get current rank
               if (xp == 0) {
                 currRank = 'Digital Noob';
@@ -181,7 +169,6 @@
 
               // Display Rank
               document.getElementById('userRank-<%= member.id %>').innerHTML = currRank;
-
             </script>
           </div>
         <% } %>
