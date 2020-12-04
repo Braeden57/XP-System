@@ -34,7 +34,7 @@
 <div>
   <div id="myProgress">
     <div id="myBar"></div>
-    <img id='pro-pic' src='data:image/<%= user.image.contentType %>;base64,
+    <img id='pro-pic' src='data:image/<%=user.image.contentType%>;base64,
                      <%=user.image.data.toString('base64')%>'>
   </div>
   <p stlye='text-align: right;' id='percent'></p>
@@ -53,6 +53,7 @@
 <!-- Action Buttons -->
 <a href="/users/logout" class="btn btn-secondary">Logout</a>
 <button onClick='passData()' class='btn btn-secondary'>Edit</button>
+
 <!-- Passing user _id to edit page script -->
 <script>
   function passData() {

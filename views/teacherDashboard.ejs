@@ -113,6 +113,7 @@
       {"Master Digital Crafter": 800} // index 12
     ]
     let indexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12]
+
     // Students should't be on this page sooooo...
     console.log("Students Shouldnt be here");
   </script>
@@ -127,6 +128,7 @@
         <% if (member.role == "Student") { %>
           <!-- Creates User Button link -->
           <li><button class='btn btn-link mt-2' onclick='openProfile("<%= member.id %>")'><%= member.name %></button></li>
+          
           <!-- Creates hidden Div with user specific Data -->
           <div style='display: none; position: relative;' data-role='page' id='<%= member._id %>'>
             <img id='user-pro-pic' src='data:image/<%=member.image.contentType%>;base64,<%=member.image.data.toString('base64')%>'>
@@ -139,6 +141,7 @@
               <p><%= member.role %></p>
             </div>
             <br>
+
             <!-- Calculates user specific Rank -->
             <script>
               xp = <%= member.xp %>;
@@ -163,6 +166,7 @@
                   }
                 }
               }
+
               // Display Rank
               document.getElementById('userRank-<%= member.id %>').innerHTML = currRank;
             </script>
