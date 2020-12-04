@@ -88,6 +88,7 @@
 
     <!-- Action Buttons -->
     <a id='logout-btn' href="/users/logout" class="btn btn-secondary">Logout</a>
+    <button onClick='passData()' class='btn btn-secondary'>Edit</button>
   </div>
 </div>
 <br>
@@ -128,7 +129,7 @@
         <% if (member.role == "Student") { %>
           <!-- Creates User Button link -->
           <li><button class='btn btn-link mt-2' onclick='openProfile("<%= member.id %>")'><%= member.name %></button></li>
-          
+
           <!-- Creates hidden Div with user specific Data -->
           <div style='display: none; position: relative;' data-role='page' id='<%= member._id %>'>
             <img id='user-pro-pic' src='data:image/<%=member.image.contentType%>;base64,<%=member.image.data.toString('base64')%>'>
