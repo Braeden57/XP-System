@@ -223,7 +223,6 @@ router.post('/edit', upload.single('image'), (req, res, next) => {
             console.log('With defaultImage');
             db.close()
           });
-          res.flash('Success')
           res.redirect('/users/login');
         }
       );

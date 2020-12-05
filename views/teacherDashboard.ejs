@@ -36,6 +36,11 @@
     top: 0px;
     right: 0px;
   }
+  #edit-btn {
+    position: absolute;
+    top: 0px;
+    right: 85px;
+  }
   #welcome {
     position: absolute;
     left: 115px;
@@ -88,7 +93,16 @@
 
     <!-- Action Buttons -->
     <a id='logout-btn' href="/users/logout" class="btn btn-secondary">Logout</a>
-    <button onClick='passData()' class='btn btn-secondary'>Edit</button>
+    <button id='edit-btn' onClick='passData()' class='btn btn-secondary'>Edit</button>
+
+    <!-- Passing user _id to edit page script -->
+    <script>
+      function passData() {
+        let url = '/users/edit?name=' + encodeURIComponent('<%= user._id %>');
+
+        document.location.href = url;
+      }
+    </script>
   </div>
 </div>
 <br>
