@@ -2,57 +2,92 @@
 <style>
   #myProgress {
     position: relative;
-    height: 150px;
-    width: 150px;
+    height: 200px;
+    width: 200px;
     background-color: #ddd;
     border-style: solid;
-    border-color: rgba(0, 0, 0, .5);
+    border-color: rgba(0, 0, 0, .4);
+    border-radius: 12px;
+    overflow: hidden;
   }
 
   #myBar {
     position: absolute;
     bottom: 0px;
     left: 0px;
-    width: 145px;
+    width: 100%;
     height: 1%;
     background-color: #46c7f2;
   }
 
   #pro-pic {
     position: absolute;
-    margin: 27px;
-    width: 90px;
-    height: 90px;
+    top: 25px;
+    left: 23px;
+    width: 150px;
+    height: 150px;
     display: block;
-    border-radius: 50px;
+    border-style: solid;
+    border-width: 5px;
+    border-radius: 100px;
+    border-color: rgba(0, 0, 0, .4);
+  }
+  .buttons-container {
+    width: 100px;
+    height: 80px;
+  }
+  .buttons-content {
+    margin: 5px;
+    margin-top: 5px;
+  }
+  .student-container {
+    position: absolute;
+    width: 400px;
+    height: 700px;
+    top: 25px;
+    left: 25px;
+    border: solid #5b94f0 2px;
+    border-style: solid;
+    border-radius: 10px;
+    background-color: rgba(112, 196, 255, .3);
+  }
+  .content {
+    margin-left: 25px;
   }
 </style>
 
-<!-- Welcome message & Profile Picture/Progress bar -->
-<h1 class="mt-4">Student Dashboard</h1>
-<p class="lead mb-3">Welcome <%= user.name %></p>
-<div>
-  <div id="myProgress">
-    <div id="myBar"></div>
-    <img id='pro-pic' src='data:image/<%=user.image.contentType%>;base64,
-                     <%=user.image.data.toString('base64')%>'>
+<div class="student-container">
+  <div class='content'>
+    <!-- Welcome message & Profile Picture/Progress bar -->
+    <h1 class="mt-4">Student Dashboard</h1>
+    <p class="lead mb-3">Welcome <%= user.name %></p>
+    <div>
+      <div id="myProgress">
+        <div id="myBar"></div>
+        <img id='pro-pic' src='data:image/<%=user.image.contentType%>;base64,
+                         <%=user.image.data.toString('base64')%>'>
+      </div>
+      <p stlye='text-align: right;' id='percent'></p>
+    </div>
+    <br>
+
+    <!-- User Data -->
+    <div>
+      <h1 id='userRank'></h1>
+      <h1>XP: <%= user.xp %></h1>
+      <p id='XP-Till'></p>
+    </div>
+    <br>
+
+    <div class="buttons-container">
+      <div class="buttons-content">
+        <!-- Action Buttons -->
+        <a href="/users/logout" class="btn btn-secondary">Logout</a>
+        <button onClick='passData()' class='btn btn-secondary'>Edit</button>
+      </div>
+    </div>
   </div>
-  <p stlye='text-align: right;' id='percent'></p>
 </div>
-<br>
-
-<!-- User Data -->
-<div>
-  <h1 id='userRank'></h1>
-  <h1>XP: <%= user.xp %></h1>
-  <p id='XP-Till'></p>
-</div>
-<br>
-<br>
-
-<!-- Action Buttons -->
-<a href="/users/logout" class="btn btn-secondary">Logout</a>
-<button onClick='passData()' class='btn btn-secondary'>Edit</button>
 
 <!-- Passing user _id to edit page script -->
 <script>
@@ -123,6 +158,9 @@
     currRank = "Master Digital Crafter";
     remain = 0;
     rankUp = 'No higher Rank, Good Job!';
+    let elem = document.getElementById("myBar");
+    let percent = 100;
+    elem.style.height = percent + '%';
   }
 
   // Display Data

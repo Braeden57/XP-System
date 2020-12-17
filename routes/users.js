@@ -5,6 +5,11 @@ const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
+
+// Load Profanity filter
+const Filter = require('bad-words');
+const filter = new Filter();
+
 // Load User model
 const User = require('../models/User');
 const { forwardAuthenticated } = require('../config/auth');
@@ -37,22 +42,77 @@ router.get('/register', forwardAuthenticated, (req, res) => res.render('register
 // Edit page
 router.get('/edit', (req, res) => res.render('edit'));
 
+// Add XP
+router.post('/addXP', (req, res, next) => {
+  const { _id_add, current_xp, amount } = req.body;
+
+  if(amount > 50) {
+    // Takes to Dahsboard on success
+    let value = encodeURIComponent('addXP > 50')
+    res.redirect('/dashboard?successRate=' + value);
+  }
+
+  if(amount < 0 || amount == 0) {
+    // Takes to Dahsboard on success
+    let value = encodeURIComponent('addXP <= 0')
+    res.redirect('/dashboard?successRate=' + value);
+  }
+
+  if (amount < 50 && amount > 0 && current_xp < 800) {
+    let newXP = current_xp + amount;
+    if (newXP > 800) {
+      newXP = 800;
+    }
+
+    try {
+      // Creates updated object
+      let updated = {
+        xp: newXP
+      }
+
+      // Updates user xp
+      MongoClient.connect(db, {
+        useUnifiedTopology: true,
+        useNewUrlParser: true}, function(err, db) {
+          if (err) throw err;
+          let dbo = db.db("XPmockDB");
+          dbo.collection('users').updateOne({ _id: ObjectId(_id_add) }, { $set: updated }, { upsert: true }, function(err, res) {
+            if (err) throw err;
+            db.close()
+          });
+          // Takes to Dahsboard on success
+          let value = encodeURIComponent(amount.toString())
+          res.redirect('/dashboard?successRate=' + value);
+        }
+      );
+    }
+    catch(err) {
+      console.log(err);
+    }
+  }
+});
+
 // Edit
 router.post('/edit', upload.single('image'), (req, res, next) => {
   // Passes image path to defaultImage Model
-  imagePath = __dirname + '/uploads/image-1606947471396';
+  imagePath = __dirname + '/uploads/default-image';
   module.exports = {
-    path: imagePath
+    defaultPath: imagePath
   }
 
   // Gets inputs
-  const { _id, name, newPassword, newPassword2 } = req.body;
+  let { _id, name, newPassword, newPassword2 } = req.body;
   let errors = [];
   let useName = true;
   let useNewPassword = true;
 
   if (!name) {
     useName = false;
+  }
+
+  if (filter.isProfane(name)) {
+    errors.push({ msg: "Name contains profanity" });
+    name = filter.clean(name);
   }
 
   if (!newPassword) {
@@ -81,13 +141,22 @@ router.post('/edit', upload.single('image'), (req, res, next) => {
     }
   }
 
+  if (filter.isProfane(newPassword)) {
+    errors.push({ msg: "Password contains profanity" });
+    newPassword = filter.clean(newPassword);
+  }
+
+  if (filter.isProfane(newPassword2)) {
+    errors.push({ msg: "Password contains profanity" });
+    newPassword2 = filter.clean(newPassword2);
+  }
+
   // Error Handling
   if (errors.length > 0) {
     // Redirects to edit page with errors
     res.render('edit', {
       errors,
       name,
-      currPassword,
       newPassword,
       newPassword2
     });
@@ -106,9 +175,6 @@ router.post('/edit', upload.single('image'), (req, res, next) => {
           });
         });
 
-        console.log(newPassword);
-        console.log(hashPass);
-
         //creates updated image object
         updated = {
           name: name,
@@ -151,6 +217,12 @@ router.post('/edit', upload.single('image'), (req, res, next) => {
           }
         }
       }
+
+      // Deletes File for its not needed
+      fs.unlink(path.join(__dirname + '/uploads/' + req.file.filename), function (err) {
+        if (err) throw err;
+      });
+
       //Updates user and redirects to dashboard
       MongoClient.connect(db, {
         useUnifiedTopology: true,
@@ -159,8 +231,6 @@ router.post('/edit', upload.single('image'), (req, res, next) => {
           let dbo = db.db("XPmockDB");
           dbo.collection('users').updateOne({ _id: ObjectId(_id) }, { $set: updated }, { upsert: true }, function(err, res) {
             if (err) throw err;
-            console.log('1 Document Updated');
-            console.log('With customImage');
             db.close()
           });
           res.redirect('/users/login');
@@ -168,7 +238,6 @@ router.post('/edit', upload.single('image'), (req, res, next) => {
       );
     }
     catch(err) {
-      console.log(err);
       if (useName && useNewPassword) {
         // Encrypts password
         bcrypt.genSalt(10, (err, salt) => {
@@ -178,9 +247,6 @@ router.post('/edit', upload.single('image'), (req, res, next) => {
           });
         });
 
-        console.log(newPassword);
-        console.log(hashPass);
-
         //creates updated image object
         updated = {
           name: name,
@@ -219,8 +285,6 @@ router.post('/edit', upload.single('image'), (req, res, next) => {
           let dbo = db.db("XPmockDB");
           dbo.collection('users').updateOne({ _id: ObjectId(_id) }, { $set: updated }, { upsert: true }, function(err, res) {
             if (err) throw err;
-            console.log('1 Document Updated');
-            console.log('With defaultImage');
             db.close()
           });
           res.redirect('/users/login');
@@ -230,21 +294,175 @@ router.post('/edit', upload.single('image'), (req, res, next) => {
   }
 });
 
-// Register
-router.post('/register', upload.single('image'), (req, res, next) => {
+// Register Teacher
+router.post('/registerTeacher', upload.single('image'), (req, res, next) => {
   // Passes image path to defaultImage Model
-  path = __dirname + '/uploads/image-1606947471396';
+  imagePath = __dirname + '/uploads/default-image';
   module.exports = {
-    path: path
+    defaultPath: imagePath
   }
 
   // Collects input
-  const { name, email, password, password2 } = req.body;
+  let { name, email, password, password2 } = req.body;
   let errors = [];
 
   // Check for blanks
   if (!name || !email || !password || !password2) {
     errors.push({ msg: 'Please enter all fields' });
+  }
+
+  if (filter.isProfane(name)) {
+    errors.push({ msg: 'Name contains profanity' });
+    name = filter.clean(name);
+  }
+
+  if (filter.isProfane(password)) {
+    errors.push({ msg: "Password contains profanity" })
+    password = filter.clean(password);
+  }
+
+  if(filter.isProfane(password2)) {
+    errors.push({ msg: "Password contains profanity" })
+    password2 = filter.clean(password2);
+  }
+
+  // Check if password is confirmed
+  if (password != password2) {
+    errors.push({ msg: 'Passwords do not match' });
+  }
+
+  // Validates password is to required length
+  if (password.length < 6) {
+    errors.push({ msg: 'Password must be at least 6 characters' });
+  }
+
+  // Error handling
+  if (errors.length > 0) {
+    // Redirects to register page with errors
+    res.render('register', {
+      errors,
+      name,
+      email,
+      password,
+      password2
+    });
+  } else {
+    // Verifies Email isnt taken
+    User.findOne({ email: email }).then(user => {
+      if (user) {
+        errors.push({ msg: 'Email already exists' });
+        // Redirect to dashboard page with errors
+        res.render('dashboard', {
+          errors,
+          name,
+          email,
+          password,
+          password2
+        });
+      } else {
+
+        try {
+          // Creates new User Object
+          const newUser = new User({
+            name,
+            email,
+            password,
+            image: {
+              data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
+              contentType: 'image/png'
+            }
+          });
+
+          // Deletes File for its not needed
+          fs.unlink(path.join(__dirname + '/uploads/' + req.file.filename), function (err) {
+            if (err) throw err;
+          });
+
+          // Encrypts password
+          bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(newUser.password, salt, (err, hash) => {
+              if (err) throw err;
+              newUser.password = hash;
+              newUser.role = "Teacher";
+              newUser
+                .save()
+                .then(user => {
+                  req.flash(
+                    'success_msg'
+                  );
+                  // Takes to Dashboard on success
+                  let value = encodeURIComponent('success')
+                  res.redirect('/dashboard?createTeacher=' + value);
+                })
+                .catch(err => console.log(err));
+            });
+          });
+        }
+        catch(err) {
+          const defaultImage = require('../models/defaultImage').defaultImage;
+          // Creates new User Object
+          const newUser = new User({
+            name,
+            email,
+            password,
+            image: defaultImage
+          });
+
+          // Encrypts password
+          bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(newUser.password, salt, (err, hash) => {
+              if (err) throw err;
+              newUser.password = hash;
+              newUser.role = "Teacher";
+              newUser
+                .save()
+                .then(user => {
+                  req.flash(
+                    'success_msg'
+                  );
+                  // Takes to Dashboard on success
+                  let value = encodeURIComponent('success')
+                  res.redirect('/dashboard?createTeacher=' + value);
+                })
+                .catch(err => console.log(err));
+            });
+          });
+        }
+      }
+    });
+  }
+});
+
+// Register
+router.post('/register', upload.single('image'), (req, res, next) => {
+  // Passes image path to defaultImage Model
+  imagePath = __dirname + '/uploads/default-image';
+  module.exports = {
+    defaultPath: imagePath
+  }
+
+  // Collects input
+  let { name, email, password, password2 } = req.body;
+  let errors = [];
+
+  // Check for blanks
+  if (!name || !email || !password || !password2) {
+    errors.push({ msg: 'Please enter all fields' });
+  }
+
+  if(filter.isProfane(name)) {
+    errors.push({ msg: "Name contains profanity" });
+    name = filter.clean(name);
+  }
+
+  if(filter.isProfane(password)) {
+    errors.push({ msg: "Password contains profanity" });
+    password = filter.clean(password);
+  }
+
+  if(filter.isProfane(password2)) {
+    errors.push({ msg: "Password contains profanity" });
+    password2 = filter.clean(password2);
   }
 
   // Check if password is confirmed
@@ -292,6 +510,11 @@ router.post('/register', upload.single('image'), (req, res, next) => {
               data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
               contentType: 'image/png'
             }
+          });
+
+          // Deletes File for its not needed
+          fs.unlink(path.join(__dirname + '/uploads/' + req.file.filename), function (err) {
+            if (err) throw err;
           });
 
           // Encrypts password

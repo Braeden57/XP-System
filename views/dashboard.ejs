@@ -1,4 +1,7 @@
 <!-- Shows user specific Dashboard -->
+<% if (user.role == "Admin") { %>
+  <% include admin %>
+<% } %>
 <% if (user.role == "Teacher") { %>
   <% include teacherDashboard %>
 <% } %>

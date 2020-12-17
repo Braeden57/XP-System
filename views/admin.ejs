@@ -4,23 +4,24 @@
     width: 230px;
     display: inline-block;
   }
-  .head {
-    margin-bottom: 100px;
-  }
-  .teacher-container {
+  .buttons-container {
     position: absolute;
-    width: 300px;
-    left: 205px;
+    width: 174px;
+    height: 500px;
+    top: 25px;
+    right: 25px;
+    border: solid #5b94f0 2px;
+    border-style: solid;
+    border-radius: 10px;
+    background-color: rgba(112, 196, 255, .3);
   }
-  #pro-pic {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 100px;
-    display: block;
-    border-radius: 50px;
-    border: 1px solid black;
-    margin:5px;
+  #newTeacher-btn {
+    margin-left: 25px;
+    margin-top: 10px;
+  }
+  #logout-btn {
+    margin-left: 50px;
+    margin-top: 10px;
   }
   #user-pro-pic {
     position: absolute;
@@ -33,32 +34,7 @@
     border: 1px solid black;
     margin:5px;
   }
-  .buttons-container {
-    position: absolute;
-    width: 151px;
-    height: 500px;
-    top: 25px;
-    right: 25px;
-    border: solid #5b94f0 2px;
-    border-style: solid;
-    border-radius: 10px;
-    background-color: rgba(112, 196, 255, .3);
-  }
-  #edit-btn {
-    width: 95px;
-    margin-left: 28px;
-    margin-top: 10px;
-  }
-  #logout-btn {
-    width: 95px;
-    margin-left: 28px;
-    margin-top: 10px;
-  }
-  #welcome {
-    position: absolute;
-    left: 115px;
-    top: 60px;
-  }
+
   h2 {
     font: 350 35px/1.5 Helvetica, Verdana, sans-serif;
     margin: 0;
@@ -93,34 +69,71 @@
   }
 </style>
 
-<!-- Welcome Message & Profile Picture -->
-<h1 class="mt-4">Teacher Dashboard</h1>
+<!-- Header -->
+<h1 class="mt-4">Site Admin</h1>
 <div class='head'>
-  <div>
-    <div class="teacher-container">
-      <p id='welcome' class="lead mb-3">Welcome <%= user.name %></p>
-      <img id='pro-pic' src='data:image/<%=user.image.contentType%>;base64,
-        <%=user.image.data.toString('base64')%>'>
+  <div id='teacher-container'>
+    <div>
+      <p id='welcome' class="lead mb-3">Welcome Admin</p>
     </div>
     <br>
-
     <div class="buttons-container">
       <!-- Action Buttons -->
-      <a id='logout-btn' href="/users/logout" class="btn btn-info">Logout</a>
-      <button id='edit-btn' onClick='passData()' class='btn btn-info'>Edit</button>
+      <a id='logout-btn' href="/users/logout" class="btn btn-secondary">Logout</a>
+      <!-- Button trigger modal -->
+      <button id="newTeacher-btn" onClick='openModal()' type="button" class="btn btn-outline-info btn-sm">
+        Create New Teacher
+      </button>
     </div>
-
-    <!-- Passing user _id to edit page script -->
-    <script>
-      function passData() {
-        let url = '/users/edit?name=' + encodeURIComponent('<%= user._id %>');
-
-        document.location.href = url;
-      }
-    </script>
   </div>
 </div>
-<br>
+
+<script>
+
+  function openModal() {
+    $("#exampleModal").modal()
+  }
+
+  // Creates unique ID
+  function makeid(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
+  // Create Div
+  function createDiv(type, message) {
+    let id = makeid(8);
+
+    if (type == 'error') {
+      document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none;" class="alert alert-warning alert-dismissible fade show" role="alert">';
+    }
+    if (type == 'message') {
+      document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none;" class="alert alert-info alert-dismissible fade show" role="alert">';
+    }
+    document.getElementById('new-div-'+id).innerHTML += '<div id="message'+id+'">'+message+'</div>';
+    document.getElementById('new-div-'+id).innerHTML += '<button id="close-btn-'+id+'" class="close" data-dismiss="alert" aria-label="Close"></button>';
+    document.getElementById('close-btn-'+id).innerHTML += '<span aria-hidden="true">&times;</span>';
+    document.getElementById('new-div-'+id).style.display = "block";
+  }
+
+</script>
+
+<!-- Catching url Parameters -->
+<script>
+  window.onload = function () {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const isSuccess = urlParams.get('createTeacher')
+    if(isSuccess == 'success') {
+      createDiv('message', 'Successfully Created Teacher')
+    }
+  }
+</script>
 
 <!-- Sets Variables for calculating users data -->
 <div>
@@ -145,7 +158,7 @@
     let indexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12]
 
     // Students should't be on this page sooooo...
-    console.log("Students Shouldnt be here");
+    console.log("Students Also Shouldnt be here");
   </script>
 
   <!-- Alert container -->
@@ -156,35 +169,64 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"</h5>
+          <h5 class="modal-title" id="exampleModalLabel">Create New Teacher</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <form action="/users/addXP" method="POST">
-            <div>
-              <input id='_id_add' type='text' name='_id_add' value='' style='display: none'></input>
-              <input id="current_xp" type="text" name="current_xp" value="" style="display: none"></input>
-            </div>
-            <div>
-              <p>Minimum: 1</p>
-              <p>Maximum: 50</p>
+          <% include ./partials/messages %>
+          <form action="/users/registerTeacher" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input
+                type="name"
+                id="name"
+                name="name"
+                class="form-control"
+                placeholder="Enter Name"
+                value="<%= typeof name != 'undefined' ? name : '' %>"
+              />
             </div>
             <div class="form-group">
-              <label for="amount">Amount</label>
-              <input
-                id="amount"
-                name="amount"
-                type="number"
-                min="1"
-                max="50"
-                value=""
-                class="form-control"
-                >
+              <label for='image'>Upload Profile Picture</label>
+              <input class="form-control-file" type="file" id="image" name="image" value="">
             </div>
-            <button type="submit" class="btn btn-primary">
-              Add XP
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class="form-control"
+                placeholder="Enter Email"
+                value="<%= typeof email != 'undefined' ? email : '' %>"
+              />
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="form-control"
+                placeholder="Create Password"
+                value="<%= typeof password != 'undefined' ? password : '' %>"
+              />
+            </div>
+            <div class="form-group">
+              <label for="password2">Confirm Password</label>
+              <input
+                type="password"
+                id="password2"
+                name="password2"
+                class="form-control"
+                placeholder="Confirm Password"
+                value="<%= typeof password2 != 'undefined' ? password2 : '' %>"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+              Register Teacher
             </button>
           </form>
         </div>
@@ -195,89 +237,12 @@
     </div>
   </div>
 
-  <script>
-    // Creates unique ID
-    function makeid(length) {
-      var result = '';
-      var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      var charactersLength = characters.length;
-      for ( var i = 0; i < length; i++ ) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      }
-      return result;
-    }
-
-    // Create Div
-    function createDiv(type, message) {
-      let id = makeid(8);
-
-      if (type == 'error') {
-        document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none;" class="alert alert-warning alert-dismissible fade show" role="alert">';
-      }
-      if (type == 'message') {
-        document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none;" class="alert alert-info alert-dismissible fade show" role="alert">';
-      }
-      document.getElementById('new-div-'+id).innerHTML += '<div id="message'+id+'">'+message+'</div>';
-      document.getElementById('new-div-'+id).innerHTML += '<button id="close-btn-'+id+'" class="close" data-dismiss="alert" aria-label="Close"></button>';
-      document.getElementById('close-btn-'+id).innerHTML += '<span aria-hidden="true">&times;</span>';
-      document.getElementById('new-div-'+id).style.display = "block";
-    }
-
-    // // Check amount
-    // function amountCheck(_id) {
-    //   const amount = document.getElementById("amount").value;
-    //   if (amount > 50) {
-    //     createDiv('error', "Can't add more than 50 XP");
-    //   }
-    //   if (amount == 0 || amount < 0) {
-    //     createDiv('error', "XP Must be more than 0");
-    //   }
-    //
-    //   if (amount > 0 && amount < 50) {
-    //
-    //     createDiv('message', "Succesfully added XP");
-    //   }
-    // }
-
-    // Pass name to Modal
-    function passName(name, xp, member_id) {
-      if (xp < 800) {
-        document.getElementById("exampleModalLabel").innerHTML = "Give " + name + " XP";
-        document.getElementById("_id_add").value = member_id;
-        document.getElementById("current_xp").value = xp;
-        $("#exampleModal").modal()
-      }
-      if (xp >= 800) {
-        // Construct and show Max XP Alert
-        message = name + ' has reached max XP!';
-        createDiv('message', message);
-      }
-    }
-
-    // Catching url Parameters
-    window.onload = function () {
-      const queryString = window.location.search;
-      const urlParams = new URLSearchParams(queryString);
-      const successRate = urlParams.get('successRate')
-      if(successRate == 'addXP > 50') {
-        createDiv('error', "Can't add more than 50 XP")
-      }
-      if(successRate == 'addXP <= 0') {
-        createDiv('error', "XP Must be Greater than 0");
-      }
-      if(parseInt(successRate) > 0 && parseInt(successRate) < 50 || parseInt(successRate) == 50) {
-        createDiv('message', "Gave " + successRate + "XP to a Student");
-      }
-    }
-  </script>
-
-  <!-- List of all site students (not teachers) -->
-  <h2>Studen Members</h2>
+  <!-- List of all site students and teachers -->
   <div class='members'>
+    <h2>All Site Members</h2>
     <ul>
       <!-- Loops through all members -->
       <% members.forEach(function (member) { %>
-        <!-- Identifies students -->
         <% if (member.role == "Student") { %>
           <!-- Creates User Button link -->
           <li><button class='btn btn-link mt-2' onclick='openProfile("<%= member.id %>")'><%= member.name %></button></li>
@@ -287,15 +252,9 @@
             <img id='user-pro-pic' src='data:image/<%=member.image.contentType%>;base64,<%=member.image.data.toString('base64')%>'>
             <p id='memberName' class='lead mb-3'><%= member.name %></p>
             <p class='lead mb-3'><%= member.email %></p>
-            <br>
             <div>
               <p id='userRank-<%= member.id %>'></p>
               <p>XP: <%= member.xp %></p>
-
-              <!-- Button trigger modal -->
-              <button onClick='passName("<%= member.name %>", <%= member.xp %>, "<%= member._id %>")' type="button" class="btn btn-outline-info btn-sm">
-                Add XP
-              </button>
 
               <p><%= member.role %></p>
             </div>
@@ -329,6 +288,21 @@
               // Display Rank
               document.getElementById('userRank-<%= member.id %>').innerHTML = currRank;
             </script>
+          </div>
+        <% } %>
+        <% if (member.role == "Teacher") { %>
+          <!-- Creates User Button link -->
+          <li><button class='btn btn-link mt-2' onclick='openProfile("<%= member.id %>")'><%= member.name %></button></li>
+
+          <!-- Creates hidden Div with user specific Data -->
+          <div style='display: none; position: relative;' data-role='page' id='<%= member._id %>'>
+            <img id='user-pro-pic' src='data:image/<%=member.image.contentType%>;base64,<%=member.image.data.toString('base64')%>'>
+            <p id='memberName' class='lead mb-3'><%= member.name %></p>
+            <p class='lead mb-3'><%= member.email %></p>
+            <div>
+              <p><%= member.role %></p>
+            </div>
+            <br>
           </div>
         <% } %>
       <% }) %>
