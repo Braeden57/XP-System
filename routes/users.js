@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
+const Quest = require('../models/Quest');
 
 // Load Profanity filter
 const Filter = require('bad-words');
@@ -33,6 +34,15 @@ let storage = multer.diskStorage({
 
 let upload = multer({ storage: storage });
 
+let questsList;
+// Collects Quest Data
+Quest.find({}, function(err, quests) {
+  questsList = quests;
+});
+
+// Show Quest page
+router.get('/quests', (req, res) => res.render('quests', { quests: questsList }));
+
 // Login Page
 router.get('/login', forwardAuthenticated, (req, res) => res.render('login'));
 
@@ -41,6 +51,52 @@ router.get('/register', forwardAuthenticated, (req, res) => res.render('register
 
 // Edit page
 router.get('/edit', (req, res) => res.render('edit'));
+
+// Create Quest
+router.post('/createQuest', (req, res, next) => {
+  const { title, amount, instructions, campaign} = req.body;
+
+  let errors = [];
+
+  // Checks if Quest with title exists
+  Quest.findOne({ title: title }).then(quest => {
+    if (quest) {
+      errors.push({ msg: 'Quest Already Exists' });
+      // Redirect to dashboard page with errors
+      res.render('dashboard', {
+        errors,
+        name,
+        email,
+        password,
+        password2
+      });
+    } else {
+
+      try {
+        // Creates new User Object
+        const newQuest = new Quest({
+          title: title,
+          campaign: campaign,
+          xp: amount,
+          instruction: instructions
+        });
+        newQuest
+          .save()
+          .then(user => {
+            req.flash(
+              'success_msg'
+            );
+            // Takes to Dashboard on success
+            let value = encodeURIComponent('createdQuest')
+            res.redirect('/dashboard?successRate=' + value);
+          })
+          .catch(err => console.log(err));
+      } catch (err) {
+        if (err) throw err;
+      }
+    }
+  });
+});
 
 // Add XP
 router.post('/addXP', (req, res, next) => {
@@ -59,7 +115,7 @@ router.post('/addXP', (req, res, next) => {
   }
 
   if (amount < 50 && amount > 0 && current_xp < 800) {
-    let newXP = current_xp + amount;
+    let newXP = parseInt(current_xp) + parseInt(amount);
     if (newXP > 800) {
       newXP = 800;
     }

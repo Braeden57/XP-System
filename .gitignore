@@ -1,1 +1,8 @@
-/test
+# Dependencies.
+node_modules/*
+
+# Tests folder.
+test/*
+
+# Enviroment variables
+.env

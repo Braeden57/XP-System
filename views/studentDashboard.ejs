@@ -1,5 +1,23 @@
 <!-- Simple Syling for layout -->
 <style>
+  .quests-container {
+    position: absolute;
+    width: 650px;
+    height: 645px;
+    top: 100px;
+    left: 450px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, .2);
+    border-radius: 15px;
+    background-color: rgba(0, 0, 0, .2);
+  }
+  .menu-buttons {
+    width: 200px;
+  }
+  .quest-buttons {
+    margin-left: 25px;
+    margin-top: 10px;
+  }
   #myProgress {
     position: relative;
     height: 200px;
@@ -10,7 +28,11 @@
     border-radius: 12px;
     overflow: hidden;
   }
-
+  #quest-title {
+    position: absolute;
+    left: 720px;
+    top: 25px;
+  }
   #myBar {
     position: absolute;
     bottom: 0px;
@@ -18,11 +40,6 @@
     width: 100%;
     height: 1%;
     background-color: #46c7f2;
-  }
-  #bug-btn {
-    position: absolute;
-    bottom: 60px;
-    left: 25px;
   }
   #pro-pic {
     position: absolute;
@@ -39,7 +56,7 @@
   .student-container {
     position: absolute;
     width: 400px;
-    height: 700px;
+    height: 720px;
     top: 25px;
     left: 25px;
     border: solid #5b94f0 2px;
@@ -49,6 +66,42 @@
   }
   .content {
     margin-left: 25px;
+  }
+  .list-button {
+    margin-left: 25px;
+    margin-top: 25px;
+  }
+  .quest-box {
+    margin-top: 15px;
+    margin-left: 30px;
+    transition: .2s;
+  }
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    font: 200 20px/1.5 Helvetica, Verdana, sans-serif;
+    border-bottom: 1px solid #ccc;
+  }
+  li:last-child {
+    border: none;
+  }
+  li a {
+    text-decoration: none;
+    color: #000;
+    display: block;
+    width: 200px;
+    -webkit-transition: font-size 0.3s ease, background-color 0.3s ease;
+    -moz-transition: font-size 0.3s ease, background-color 0.3s ease;
+    -o-transition: font-size 0.3s ease, background-color 0.3s ease;
+    -ms-transition: font-size 0.3s ease, background-color 0.3s ease;
+    transition: font-size 0.3s ease, background-color 0.3s ease;
+  }
+  li a:hover {
+    font-size: 30px;
+    background: #f6f6f6;
   }
 </style>
 
@@ -78,9 +131,96 @@
     <!-- Action Buttons -->
     <a href="/users/logout" class="btn btn-secondary">Logout</a>
     <button onClick='passData()' class='btn btn-secondary'>Edit</button>
-    <a id='bug-btn' href="https://github.com/Braeden57/XP-System/issues" target="_blank" class='btn btn-danger'>Report Bug</a>
+    <a href="https://github.com/Braeden57/XP-System/issues" target="_blank" class='btn btn-danger'>Report Bug</a>
   </div>
 </div>
+
+<div>
+  <h1 id="quest-title">Quests</h1>
+  <div class='quests-container'>
+    <div class='quest-buttons'>
+      <div class="btn-group btn-group-toggle" data-toggle="buttons">
+        <label onClick="showHTML()" class="menu-buttons btn btn-info active">
+          <input type="radio" name="options" id="option1" autocomplete="off" checked> HTML
+        </label>
+        <label onClick="showCSS()" class="menu-buttons btn btn-info">
+          <input type="radio" name="options" id="option2" autocomplete="off"> CSS
+        </label>
+        <label onClick="showJS()" class="menu-buttons btn btn-info">
+          <input type="radio" name="options" id="option3" autocomplete="off"> JavaScript
+        </label>
+      </div>
+    </div>
+    <div class='quests-content'>
+      <div style="display: none;" id="HTML-Display">
+        <ul>
+          <% quests.forEach(function (quest) { %>
+            <% if(quest.campaign == "HTML") { %>
+              <!-- Creates Quest Button link -->
+              <li><button class='list-button btn btn-outline-success mt-2' onclick="redirect('<%= quest._id %>')"><%= quest.title %></button></li>
+            <% } %>
+          <% }) %>
+        </ul>
+      </div>
+      <div style="display: none;" id="CSS-Display">
+        <ul>
+          <% quests.forEach(function (quest) { %>
+            <% if(quest.campaign == "CSS") { %>
+              <!-- Creates Quest Button link -->
+              <li><button class='list-button btn btn-outline-success mt-2' onclick="redirect('<%= quest._id %>')"><%= quest.title %></button></li>
+              <% } %>
+          <% }) %>
+        </ul>
+      </div>
+      <div style="display: none;" id="JS-Display">
+        <ul>
+          <% quests.forEach(function (quest) { %>
+            <% if(quest.campaign == "JS") { %>
+              <!-- Creates Quest Button link -->
+              <li><button class='list-button btn btn-outline-success mt-2' onclick="redirect('<%= quest._id %>')"><%= quest.title %></button></li>
+            <% } %>
+          <% }) %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quest Display -->
+<script>
+  function showHTML() {
+    let state = document.getElementById('HTML-Display').style.display;
+    if (state == "block") {
+      document.getElementById('HTML-Display').style.display = 'none';
+    } else {
+      document.getElementById('JS-Display').style.display = 'none';
+      document.getElementById('CSS-Display').style.display = 'none';
+      document.getElementById('HTML-Display').style.display = 'block';
+    }
+  }
+
+  function showCSS() {
+    let state = document.getElementById('CSS-Display').style.display;
+    if (state == "block") {
+      document.getElementById('CSS-Display').style.display = 'none';
+    } else {
+      document.getElementById('HTML-Display').style.display = 'none';
+      document.getElementById('JS-Display').style.display = 'none';
+      document.getElementById('CSS-Display').style.display = 'block';
+    }
+  }
+
+  function showJS() {
+    let state = document.getElementById('JS-Display').style.display;
+    if (state == "block") {
+      document.getElementById('JS-Display').style.display = 'none';
+    } else {
+      document.getElementById('HTML-Display').style.display = 'none';
+      document.getElementById('CSS-Display').style.display = 'none';
+      document.getElementById('JS-Display').style.display = 'block';
+    }
+  }
+</script>
 
 <!-- Passing user _id to edit page script -->
 <script>
@@ -160,4 +300,9 @@
   document.getElementById('userRank').innerHTML = currRank;
   document.getElementById('XP-Till').innerHTML = remain + 'XP till your next Rank: ' + rankUp;
 
+  function redirect(id) {
+    let url = '/users/quests?id=' + encodeURIComponent(id);
+
+    document.location.href = url;
+  }
 </script>

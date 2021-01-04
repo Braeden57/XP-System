@@ -5,12 +5,43 @@
     display: inline-block;
   }
   .head {
-    margin-bottom: 100px;
+    position: absolute;
+    width: 345px;
+    height: 600px;
+    top: 25px;
+    left: 25px;
+    border: solid #5b94f0 2px;
+    border-style: solid;
+    border-radius: 10px;
+    background-color: rgba(112, 196, 255, .3);
+  }
+  .head-content {
+    position: absolute;
+    left: 15px;
   }
   .teacher-container {
     position: absolute;
     width: 300px;
-    left: 205px;
+  }
+  .members-container {
+    position: absolute;
+    left: 400px;
+  }
+  .quests-container {
+    position: absolute;
+    left: 800px;
+    background: rgba(0, 0, 0, .2);
+    border-radius: 24px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, .2);
+  }
+  .quest-content {
+    margin-left: 15px;
+    margin-top: 10px;
+    margin-right: 15px;
+  }
+  .quest {
+    color: #e05f3a;
   }
   #pro-pic {
     position: absolute;
@@ -35,14 +66,13 @@
   }
   .buttons-container {
     position: absolute;
-    width: 174px;
-    height: 500px;
-    top: 25px;
-    right: 25px;
-    border: solid #5b94f0 2px;
-    border-style: solid;
-    border-radius: 10px;
-    background-color: rgba(112, 196, 255, .3);
+    top: 425px;
+    right: 180px;
+  }
+  .button-content {
+    width: 127px;
+    margin-left: 25px;
+    margin-top: 10px;
   }
   #edit-btn {
     width: 127px;
@@ -99,9 +129,9 @@
 </style>
 
 <!-- Welcome Message & Profile Picture -->
-<h1 class="mt-4">Teacher Dashboard</h1>
 <div class='head'>
-  <div>
+  <div class='head-content'>
+    <h1 class="mt-4">Teacher Dashboard</h1>
     <div class="teacher-container">
       <p id='welcome' class="lead mb-3">Welcome <%= user.name %></p>
       <img id='pro-pic' src='data:image/<%=user.image.contentType%>;base64,
@@ -111,172 +141,227 @@
 
     <div class="buttons-container">
       <!-- Action Buttons -->
-      <a id='logout-btn' href="/users/logout" class="btn btn-outline-info btn-sm">Logout</a>
-      <button id='edit-btn' onClick='passData()' class='btn btn-outline-info btn-sm'>Edit</button>
-      <a id='bug-btn' href="https://github.com/Braeden57/XP-System/issues" target="_blank" class='btn btn-outline-info btn-sm'>Report Bug</a>
+      <a href="/users/logout" class="button-content btn btn-outline-info btn-sm">Logout</a>
+      <button onClick='passData()' class='button-content btn btn-outline-info btn-sm'>Edit</button>
+      <a href="https://github.com/Braeden57/XP-System/issues" target="_blank" class='button-content btn btn-outline-info btn-sm'>Report Bug</a>
+      <button class="button-content btn btn-outline-info btn-sm" data-toggle="modal" data-target="#createQuest">New Quest</button>
     </div>
-
-    <!-- Passing user _id to edit page script -->
-    <script>
-      function passData() {
-        let url = '/users/edit?name=' + encodeURIComponent('<%= user._id %>');
-
-        document.location.href = url;
-      }
-    </script>
   </div>
+
+  <!-- Passing user _id to edit page script -->
+  <script>
+    function passData() {
+      let url = '/users/edit?name=' + encodeURIComponent('<%= user._id %>');
+
+      document.location.href = url;
+    }
+  </script>
 </div>
 <br>
 
 <!-- Sets Variables for calculating users data -->
-<div>
-  <script>
-    let xp;
-    let currRank;
-    let ranks = [
-      {"Digital Noob": 0}, // index 0
-      {"Digital Novice": 48}, // index 1
-      {"Digital Novice II": 100}, // index 2
-      {"Digital Amature": 148}, // index 3
-      {"Digital Amature II": 200}, // index 4
-      {"Digital Apprentice": 248}, // index 5
-      {"Digital Apprentice II": 300}, // index 6
-      {"Digital Journeyman": 396}, // index 7
-      {"Digital Journeyman II": 476}, // index 8
-      {"Digital Journeyman III": 532}, // index 9
-      {"Digital Crafter": 580}, // index 10
-      {"Expert Digital Crafter": 648}, // index 11
-      {"Master Digital Crafter": 800} // index 12
-    ]
-    let indexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12]
+<script>
+  let xp;
+  let currRank;
+  let ranks = [
+    {"Digital Noob": 0}, // index 0
+    {"Digital Novice": 48}, // index 1
+    {"Digital Novice II": 100}, // index 2
+    {"Digital Amature": 148}, // index 3
+    {"Digital Amature II": 200}, // index 4
+    {"Digital Apprentice": 248}, // index 5
+    {"Digital Apprentice II": 300}, // index 6
+    {"Digital Journeyman": 396}, // index 7
+    {"Digital Journeyman II": 476}, // index 8
+    {"Digital Journeyman III": 532}, // index 9
+    {"Digital Crafter": 580}, // index 10
+    {"Expert Digital Crafter": 648}, // index 11
+    {"Master Digital Crafter": 800} // index 12
+  ]
+  let indexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12]
 
-    // Students should't be on this page sooooo...
-    console.log("Students Shouldnt be here");
-  </script>
+  // Students should't be on this page sooooo...
+  console.log("Students Shouldnt be here");
+</script>
 
-  <!-- Alert container -->
-  <div id='div-container'></div>
+<!-- Alert container -->
+<div id='div-container'></div>
 
-  <!-- Modal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+<!-- Add XP Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="/users/addXP" method="POST">
+          <div>
+            <input id='_id_add' type='text' name='_id_add' value='' style='display: none'></input>
+            <input id="current_xp" type="text" name="current_xp" value="" style="display: none"></input>
+          </div>
+          <div>
+            <p>Minimum: 1</p>
+            <p>Maximum: 50</p>
+          </div>
+          <div class="form-group">
+            <label for="amount">Amount</label>
+            <input
+              id="amount"
+              name="amount"
+              type="number"
+              min="1"
+              max="50"
+              value=""
+              class="form-control"
+              >
+          </div>
+          <button type="submit" class="btn btn-primary">
+            Add XP
           </button>
-        </div>
-        <div class="modal-body">
-          <form action="/users/addXP" method="POST">
-            <div>
-              <input id='_id_add' type='text' name='_id_add' value='' style='display: none'></input>
-              <input id="current_xp" type="text" name="current_xp" value="" style="display: none"></input>
-            </div>
-            <div>
-              <p>Minimum: 1</p>
-              <p>Maximum: 50</p>
-            </div>
-            <div class="form-group">
-              <label for="amount">Amount</label>
-              <input
-                id="amount"
-                name="amount"
-                type="number"
-                min="1"
-                max="50"
-                value=""
-                class="form-control"
-                >
-            </div>
-            <button type="submit" class="btn btn-primary">
-              Add XP
-            </button>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
+</div>
 
-  <script>
-    // Creates unique ID
-    function makeid(length) {
-      var result = '';
-      var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      var charactersLength = characters.length;
-      for ( var i = 0; i < length; i++ ) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      }
-      return result;
+<!-- Create Quest Modal -->
+<div class="modal fade" id="createQuest" tabindex="-1" role="dialog" aria-labelledby="createQuestLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createQuestLabel"</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="/users/createQuest" method="POST">
+          <div>
+            <label for="title">Title</label>
+            <input
+              id="title"
+              name="title"
+              type="text"
+              value=""
+              class="form-control"
+              required
+            >
+          </div>
+          <div class="form-group">
+            <label for="amount">Amount</label>
+            <input
+              id="amount"
+              name="amount"
+              type="number"
+              min="1"
+              max="50"
+              value=""
+              class="form-control"
+              required
+              >
+          </div>
+          <div>
+            <label for="instructions">Instructions</label>
+            <textarea
+              id="instructions"
+              name="instructions"
+              value=""
+              class="form-control"
+              required
+            ></textarea>
+          </div>
+          <div>
+            <label for="campaign">Campaign</label>
+            <select required name="campaign" id="campaign">
+              <option value="">--Please choose an option--</option>
+              <option value="HTML">HTML</option>
+              <option value="CSS">CSS</option>
+              <option value="JS">JavaScript</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            Create Quest
+          </button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Creates unique ID
+  function makeid(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
+    return result;
+  }
 
-    // Create Div
-    function createDiv(type, message) {
-      let id = makeid(8);
+  // Create Div
+  function createDiv(type, message) {
+    let id = makeid(8);
 
-      if (type == 'error') {
-        document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none;" class="alert alert-warning alert-dismissible fade show" role="alert">';
-      }
-      if (type == 'message') {
-        document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none;" class="alert alert-info alert-dismissible fade show" role="alert">';
-      }
-      document.getElementById('new-div-'+id).innerHTML += '<div id="message'+id+'">'+message+'</div>';
-      document.getElementById('new-div-'+id).innerHTML += '<button id="close-btn-'+id+'" class="close" data-dismiss="alert" aria-label="Close"></button>';
-      document.getElementById('close-btn-'+id).innerHTML += '<span aria-hidden="true">&times;</span>';
-      document.getElementById('new-div-'+id).style.display = "block";
+    if (type == 'error') {
+      document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none;" class="alert alert-warning alert-dismissible fade show" role="alert">';
     }
-
-    // // Check amount
-    // function amountCheck(_id) {
-    //   const amount = document.getElementById("amount").value;
-    //   if (amount > 50) {
-    //     createDiv('error', "Can't add more than 50 XP");
-    //   }
-    //   if (amount == 0 || amount < 0) {
-    //     createDiv('error', "XP Must be more than 0");
-    //   }
-    //
-    //   if (amount > 0 && amount < 50) {
-    //
-    //     createDiv('message', "Succesfully added XP");
-    //   }
-    // }
-
-    // Pass name to Modal
-    function passName(name, xp, member_id) {
-      if (xp < 800) {
-        document.getElementById("exampleModalLabel").innerHTML = "Give " + name + " XP";
-        document.getElementById("_id_add").value = member_id;
-        document.getElementById("current_xp").value = xp;
-        $("#exampleModal").modal()
-      }
-      if (xp >= 800) {
-        // Construct and show Max XP Alert
-        message = name + ' has reached max XP!';
-        createDiv('message', message);
-      }
+    if (type == 'message') {
+      document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none;" class="alert alert-info alert-dismissible fade show" role="alert">';
     }
+    document.getElementById('new-div-'+id).innerHTML += '<div id="message'+id+'">'+message+'</div>';
+    document.getElementById('new-div-'+id).innerHTML += '<button id="close-btn-'+id+'" class="close" data-dismiss="alert" aria-label="Close"></button>';
+    document.getElementById('close-btn-'+id).innerHTML += '<span aria-hidden="true">&times;</span>';
+    document.getElementById('new-div-'+id).style.display = "block";
+  }
 
-    // Catching url Parameters
-    window.onload = function () {
-      const queryString = window.location.search;
-      const urlParams = new URLSearchParams(queryString);
-      const successRate = urlParams.get('successRate')
-      if(successRate == 'addXP > 50') {
-        createDiv('error', "Can't add more than 50 XP")
-      }
-      if(successRate == 'addXP <= 0') {
-        createDiv('error', "XP Must be Greater than 0");
-      }
-      if(parseInt(successRate) > 0 && parseInt(successRate) < 50 || parseInt(successRate) == 50) {
-        createDiv('message', "Gave " + successRate + "XP to a Student");
-      }
+  // Pass name to Modal
+  function passName(name, xp, member_id) {
+    if (xp < 800) {
+      document.getElementById("exampleModalLabel").innerHTML = "Give " + name + " XP";
+      document.getElementById("_id_add").value = member_id;
+      document.getElementById("current_xp").value = xp;
+      $("#exampleModal").modal()
     }
-  </script>
+    if (xp >= 800) {
+      // Construct and show Max XP Alert
+      message = name + ' has reached max XP!';
+      createDiv('message', message);
+    }
+  }
 
+  // Catching url Parameters
+  window.onload = function () {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const successRate = urlParams.get('successRate')
+    if(successRate == 'addXP > 50') {
+      createDiv('error', "Can't add more than 50 XP")
+    }
+    if(successRate == 'addXP <= 0') {
+      createDiv('error', "XP Must be Greater than 0");
+    }
+    if(parseInt(successRate) > 0 && parseInt(successRate) < 50 || parseInt(successRate) == 50) {
+      createDiv('message', "Gave " + successRate + "XP to a Student");
+    }
+    if(successRate == 'createdQuest') {
+      createDiv('message', "Successfully Created Quest");
+    }
+  }
+</script>
+
+<div class="members-container">
   <!-- List of all site students (not teachers) -->
   <h2>Studen Members</h2>
   <div class='members'>
@@ -341,6 +426,15 @@
     </ul>
   </div>
 </div>
+
+<div class="quests-container">
+  <!-- List of Quests -->
+  <div class='quest-content'>
+    <h2>All Quests</h2>
+    <% quests.forEach(function (quest) { %>
+      <p class='quest'><%= quest.title %></p>
+    <% }) %>
+  </div>
 
 <!-- Script for show/hide user profile data -->
 <script>

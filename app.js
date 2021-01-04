@@ -7,7 +7,8 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 var path = require('path');
 var fs = require('fs');
-require('dotenv/config');
+var dotenv = require('dotenv');
+dotenv.config();
 
 const app = express();
 
@@ -20,7 +21,7 @@ const db = require('./config/keys').mongoURI;
 // Connect to MongoDB
 mongoose
   .connect(
-    db,
+    process.env.DB_URI || 'mongodb://localhost/knoldus',
     { useNewUrlParser: true, useUnifiedTopology: true}
   )
   .then(() => console.log('MongoDB Connected'))
