@@ -19,7 +19,6 @@ log in and check out their XP and assignments.
 ### Setting up MongoDB
 1. Install mongodb via brew. `brew install mongodb`
 1. Start mongodb via brew. `brew services restart mongodb`
-2. Or Install mongodb compass https://www.mongodb.com/try/download/compass
 
 ### Accessing the Database
 1. Locally this will use the knoldus db (or whatever you specify manually)
