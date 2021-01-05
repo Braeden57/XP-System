@@ -11,7 +11,7 @@ const QuestSchema = new mongoose.Schema({
   },
   expiry: {
     type: Date,
-    default: Date.now
+    required: true
   },
   xp: {
     type: Number,
