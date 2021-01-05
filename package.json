@@ -1,14 +1,17 @@
 {
-  "name": "node_passport_login",
+  "name": "XP-System",
   "version": "2.0.0",
-  "description": "Node.js authentication with Passport",
+  "description": "This XP System help show your progress in class and allows you to view assignments.",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
-  "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://Braeden57/Dayz-Website"
+  },
+  "author": "Braeden Sowinski",
   "license": "ISC",
   "dependencies": {
     "bad-words": "^3.0.4",
