@@ -9,19 +9,13 @@ log in and check out their XP and assignments.
 1.  [MongoDB](https://docs.mongodb.com/manual/administration/install-community/)
 
 ### Getting Started with Code  :
-1. [Set Up MongoDB](#setting-up-mongodb) and start mongodb
+1. Set up MongoDB on your computer.
 2. Clone repo from https://github.com/Braeden57/XP-System.git
 3. Run `npm install` to install dependencies.
 4. Duplicate `.env.example` and rename the new file to `.env`. Edit to your configurations.
 1. Run `npm start` to boot up server.
-1. Go to http://localhost:5000.
-
-### Setting up MongoDB
-1. Install mongodb via brew. `brew install mongodb`
-1. Start mongodb via brew. `brew services restart mongodb`
+1. Go to http://localhost:5000. Or Whatever you set it to in the `.env` file.
 
 ### Accessing the Database
-1. Locally this will use the knoldus db (or whatever you specify manually)
-1. launch mongo via your command-line: `mongo`
-1. Use `show dbs` to see all that are available. You should see `knoldus` in the list.
-1. Lets use that db: `use knoldus`.
+1. Locally this will use the knoldus db or whatever you set the DB_URI to in the `.env` file.
+1. You can use MongoDB compass app to view the db and edit any information stored.
