@@ -54,7 +54,7 @@ router.get('/edit', (req, res) => res.render('edit'));
 
 // Create Quest
 router.post('/createQuest', (req, res, next) => {
-  const { title, amount, instructions, campaign} = req.body;
+  const { title, amount, expiry, instructions, campaign} = req.body;
 
   let errors = [];
 
@@ -77,6 +77,7 @@ router.post('/createQuest', (req, res, next) => {
         const newQuest = new Quest({
           title: title,
           campaign: campaign,
+          expiry: expiry,
           xp: amount,
           instruction: instructions
         });
