@@ -6,6 +6,10 @@ const passport = require('passport');
 const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
 const Quest = require('../models/Quest');
+const Course = require('../models/Course');
+const socket = require('socket.io');
+const server = require('../app.js').server;
+const io = socket(server);
 
 // Load Profanity filter
 const Filter = require('bad-words');
@@ -16,7 +20,7 @@ const User = require('../models/User');
 const { forwardAuthenticated } = require('../config/auth');
 
 // DB Config
-const db = require('../config/keys').mongoURI;
+const url = require('../config/keys').mongoURI;
 
 // Loads libraries for uploading img functions
 let fs = require('fs');
@@ -52,6 +56,70 @@ router.get('/register', forwardAuthenticated, (req, res) => res.render('register
 // Edit page
 router.get('/edit', (req, res) => res.render('edit'));
 
+// Create Course / Class
+router.post('/createClass', (req, res, next) => {
+  const { name, description, grade } = req.body;
+
+  let errors = [];
+
+  //Checks if Class Already Exists
+  Course.findOne({ name: name }).then(course => {
+    if (course) {
+      errors.push({ msg: 'Course Name Already Exists' })
+      // Redirect to dashboard page with errors
+      res.render('dashboard', {
+        errors,
+        name,
+        description,
+        grade
+      });
+    } else {
+      try {
+        // Creates new Course Object
+        const newCourse = new Course({
+          name: name,
+          description: description,
+          grade: grade
+        });
+        newCourse
+          .save()
+          .then(course => {
+            req.flash(
+              'success_msg'
+            );
+            // Takes to Dashboard on success
+            let value = encodeURIComponent('createdClass')
+            res.redirect('/dashboard?successRate=' + value);
+          })
+          .catch(err => console.log(err));
+      } catch (err) {
+        if (err) throw err;
+      }
+    }
+  });
+});
+
+// Delete User
+router.post('/deleteUser', (req, res, next) => {
+  const id = req.body.delete_id;
+
+  // Deletes User
+  MongoClient.connect(url, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true}, function(err, db) {
+      if (err) throw err;
+      let dbo = db.db("XPmockDB");
+      dbo.collection("students").deleteOne({  _id: ObjectId(id) }, function(err, obj) {
+        if (err) throw err;
+        db.close();
+      });
+      // Takes to Dahsboard on success
+      let value = encodeURIComponent('deletedUser');
+      res.redirect('/dashboard?successRate=' + value);
+    }
+  );
+});
+
 // Create Quest
 router.post('/createQuest', (req, res, next) => {
   const { title, amount, expiry, instructions, campaign} = req.body;
@@ -83,7 +151,7 @@ router.post('/createQuest', (req, res, next) => {
         });
         newQuest
           .save()
-          .then(user => {
+          .then(quest => {
             req.flash(
               'success_msg'
             );
@@ -128,7 +196,7 @@ router.post('/addXP', (req, res, next) => {
       }
 
       // Updates user xp
-      MongoClient.connect(db, {
+      MongoClient.connect(url, {
         useUnifiedTopology: true,
         useNewUrlParser: true}, function(err, db) {
           if (err) throw err;
@@ -138,8 +206,9 @@ router.post('/addXP', (req, res, next) => {
             db.close()
           });
           // Takes to Dahsboard on success
-          let value = encodeURIComponent(amount.toString())
-          res.redirect('/dashboard?successRate=' + value);
+          let value1 = encodeURIComponent(amount.toString())
+          let value2 = encodeURIComponent(_id_add);
+          res.redirect('/dashboard?successRate='+value1+'&id='+value2);
         }
       );
     }
@@ -281,7 +350,7 @@ router.post('/edit', upload.single('image'), (req, res, next) => {
       });
 
       //Updates user and redirects to dashboard
-      MongoClient.connect(db, {
+      MongoClient.connect(url, {
         useUnifiedTopology: true,
         useNewUrlParser: true}, function(err, db) {
           if (err) throw err;
@@ -335,7 +404,7 @@ router.post('/edit', upload.single('image'), (req, res, next) => {
         }
       }
       //Updates user and redirects to dashboard
-      MongoClient.connect(db, {
+      MongoClient.connect(url, {
         useUnifiedTopology: true,
         useNewUrlParser: true}, function(err, db) {
           if (err) throw err;
@@ -448,8 +517,8 @@ router.post('/registerTeacher', upload.single('image'), (req, res, next) => {
                     'success_msg'
                   );
                   // Takes to Dashboard on success
-                  let value = encodeURIComponent('success')
-                  res.redirect('/dashboard?createTeacher=' + value);
+                  let value = encodeURIComponent('createdTeacher')
+                  res.redirect('/dashboard?successRate=' + value);
                 })
                 .catch(err => console.log(err));
             });

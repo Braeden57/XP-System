@@ -28,6 +28,16 @@ const UserSchema = new mongoose.Schema({
   xp: {
     type: Number,
     default: 0
+  },
+  class: {
+    className: {
+      type: String,
+      default: null
+    },
+    questIndex: {
+      type: Number,
+      defualt: 0
+    }
   }
 });
 

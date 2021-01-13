@@ -1,8 +1,12 @@
 <!-- Simple Styling for layout -->
 <style>
   .members {
+    position: absolute;
+    top: 150px;
+    left: 25px;
     width: 230px;
     display: inline-block;
+    max-height: 30px
   }
   .buttons-container {
     position: absolute;
@@ -14,6 +18,19 @@
     border-style: solid;
     border-radius: 10px;
     background-color: rgba(112, 196, 255, .3);
+  }
+  .alert {
+    max-width: 58%;
+  }
+  .admin-detail {
+    position: absolute;
+    left: 25px;
+  }
+  #div-container {
+    position: absolute;
+    left: 30%;
+    margin-left: 25vm;
+    margin-right: 25vm;
   }
   #newTeacher-btn {
     margin-left: 25px;
@@ -73,13 +90,32 @@
     font-size: 30px;
     background: #f6f6f6;
   }
+
+  @media (max-width: 800px) {
+    .alert {
+      max-width: 55%;
+    }
+    #div-container {
+      position: absolute;
+      left: 25px;
+      top: 125px;
+      margin-left: 25vm;
+      margin-right: 25vm;
+      max-height: 125px;
+    }
+    .members {
+      position: absolute;
+      left: 24px;
+      top: 300px;
+    }
+  }
 </style>
 
 <!-- Header -->
-<h1 class="mt-4">Site Admin</h1>
 <div class='head'>
   <div id='teacher-container'>
-    <div>
+    <div class='admin-detail'>
+      <h1 class="mt-4">Site Admin</h1>
       <p id='welcome' class="lead mb-3">Welcome Admin</p>
     </div>
     <br>
@@ -87,7 +123,7 @@
       <!-- Action Buttons -->
       <a id='logout-btn' href="/users/logout" class="btn btn-outline-info btn-sm">Logout</a>
       <!-- Button trigger modal -->
-      <button id="newTeacher-btn" onClick='openModal()' type="button" class="btn btn-outline-info btn-sm">
+      <button id="newTeacher-btn" onClick='openModal("#exampleModal")' type="button" class="btn btn-outline-info btn-sm">
         Create New Teacher
       </button>
       <a id='bug-btn' href="https://github.com/Braeden57/XP-System/issues" target="_blank" class='btn btn-outline-info btn-sm'>Report Bug</a>
@@ -97,8 +133,8 @@
 
 <script>
 
-  function openModal() {
-    $("#exampleModal").modal()
+  function openModal(modalName) {
+    $(modalName).modal()
   }
 
   // Creates unique ID
@@ -117,10 +153,10 @@
     let id = makeid(8);
 
     if (type == 'error') {
-      document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none;" class="alert alert-warning alert-dismissible fade show" role="alert">';
+      document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none; clear: right;" class="alert alert-warning alert-dismissible fade show" role="alert">';
     }
     if (type == 'message') {
-      document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none;" class="alert alert-info alert-dismissible fade show" role="alert">';
+      document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none; clear: right;" class="alert alert-info alert-dismissible fade show" role="alert">';
     }
     document.getElementById('new-div-'+id).innerHTML += '<div id="message'+id+'">'+message+'</div>';
     document.getElementById('new-div-'+id).innerHTML += '<button id="close-btn-'+id+'" class="close" data-dismiss="alert" aria-label="Close"></button>';
@@ -135,9 +171,12 @@
   window.onload = function () {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const isSuccess = urlParams.get('createTeacher')
-    if(isSuccess == 'success') {
-      createDiv('message', 'Successfully Created Teacher')
+    const successRate = urlParams.get('successRate')
+    if(successRate == 'createdTeacher') {
+      createDiv('message', 'Successfully Created Teacher');
+    }
+    if(successRate == 'deletedUser') {
+      createDiv('message', "Successfully Deleted User");
     }
   }
 </script>
@@ -171,7 +210,32 @@
   <!-- Alert container -->
   <div id='div-container'></div>
 
-  <!-- Modal -->
+  <!-- Delete User Warning Modal -->
+  <div class="modal fade" id="warningModal" tabindex="-1" role="dialog" aria-labelledby="warningModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="warningModalLabel">Are you sure you wish to delete this user?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="/users/deleteUser" method="POST" enctype="multipart/form-data">
+            <input id='delete_id' type='text' name='delete_id' value='' style='display: none'></input>
+            <button type="submit" class="btn btn-primary btn-block">
+              Yes, Continue and Delete This User
+            </button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Teacher Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -264,6 +328,11 @@
               <p>XP: <%= member.xp %></p>
 
               <p><%= member.role %></p>
+
+              <!-- Delete User Option -->
+              <button id="delete-btn" onClick='deleteUser("<%= member._id %>")' type="button" class="btn btn-outline-warning btn-sm">
+                Delete User
+              </button>
             </div>
             <br>
 
@@ -294,6 +363,13 @@
 
               // Display Rank
               document.getElementById('userRank-<%= member.id %>').innerHTML = currRank;
+
+              // Delete User Function
+              function deleteUser(id) {
+                document.getElementById('delete_id').value = id;
+                openModal("#warningModal");
+              }
+
             </script>
           </div>
         <% } %>
@@ -308,6 +384,11 @@
             <p class='lead mb-3'><%= member.email %></p>
             <div>
               <p><%= member.role %></p>
+
+              <!-- Delete User Option -->
+              <button id="delete-btn" onClick='deleteUser("<%= member._id %>")' type="button" class="btn btn-outline-warning btn-sm">
+                Delete User
+              </button>
             </div>
             <br>
           </div>

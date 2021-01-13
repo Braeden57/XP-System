@@ -3,6 +3,7 @@
 School Project
 This school project is for my teacher to have students
 log in and check out their XP and assignments.
+This website application is not available online, this is just a locally run website at our school.
 
 ### Requirements :
 1.  [Node.js](https://nodejs.org/en/)
@@ -14,7 +15,7 @@ log in and check out their XP and assignments.
 3. Run `npm install` to install dependencies.
 4. Duplicate `.env.example` and rename the new file to `.env`. Edit to your configurations.
 1. Run `npm start` to boot up server.
-1. Go to http://localhost:5000. Or Whatever you set it to in the `.env` file.
+1. Go to http://localhost:8080. Or Whatever you set it to in the `.env` file.
 
 ### Accessing the Database
 1. Locally this will use any db you set the DB_URI to in the `.env` file.

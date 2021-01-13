@@ -20,6 +20,9 @@ const QuestSchema = new mongoose.Schema({
   instruction: {
     type: String,
     required: true
+  },
+  referenceClass: {
+    type: [String]
   }
 });
 

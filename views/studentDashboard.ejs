@@ -2,7 +2,7 @@
 <style>
   .quests-container {
     position: absolute;
-    width: 650px;
+    width: 625px;
     height: 645px;
     top: 100px;
     left: 450px;
@@ -15,8 +15,12 @@
     width: 200px;
   }
   .quest-buttons {
-    margin-left: 25px;
+    margin-left: 10px;
     margin-top: 10px;
+  }
+
+  #option1 {
+    width: 50px;
   }
   #myProgress {
     position: relative;
@@ -40,6 +44,7 @@
     width: 100%;
     height: 1%;
     background-color: #46c7f2;
+    transition: 1s;
   }
   #pro-pic {
     position: absolute;
@@ -103,6 +108,24 @@
     font-size: 30px;
     background: #f6f6f6;
   }
+
+  @media (max-width: 800px) {
+    .quest-all {
+      position: absolute;
+      top: 770px;
+      right: 1145px;
+    }
+    #quest-title {
+      transform: translate(-125px, 0px);
+    }
+    .quest-container {
+      width: 400px;
+      border-style: solid;
+      border-color: rgba(0, 0, 0, .2);
+      border-radius: 15px;
+      background-color: rgba(0, 0, 0, .2);
+    }
+  }
 </style>
 
 <div class="student-container">
@@ -123,7 +146,7 @@
     <!-- User Data -->
     <div>
       <h1 id='userRank'></h1>
-      <h1>XP: <%= user.xp %></h1>
+      <h1 id='userXP'>XP: <%= user.xp %></h1>
       <p id='XP-Till'></p>
     </div>
     <br>
@@ -135,7 +158,7 @@
   </div>
 </div>
 
-<div>
+<div class="quest-all">
   <h1 id="quest-title">Quests</h1>
   <div class='quests-container'>
     <div class='quest-buttons'>
@@ -186,8 +209,29 @@
   </div>
 </div>
 
-<!-- Quest Display -->
+<script src="/socket.io/socket.io.js"></script>
 <script>
+  let socket = io.connect('http://localhost:5000');
+
+  socket.on("added:xp", function(data) {
+    if(data.userID == '<%=user._id%>') {
+      reCalculate(data.addXP);
+    }
+  });
+
+  window.onload = function() {
+    calculate();
+  }
+
+  let xp = <%= user.xp %>;
+
+  // Passing user _id to edit page script
+  function passData() {
+    let url = '/users/edit?name=' + encodeURIComponent('<%= user._id %>');
+
+    document.location.href = url;
+  }
+
   function showHTML() {
     let state = document.getElementById('HTML-Display').style.display;
     if (state == "block") {
@@ -220,23 +264,6 @@
       document.getElementById('JS-Display').style.display = 'block';
     }
   }
-</script>
-
-<!-- Passing user _id to edit page script -->
-<script>
-  function passData() {
-    let url = '/users/edit?name=' + encodeURIComponent('<%= user._id %>');
-
-    document.location.href = url;
-  }
-</script>
-
-<!-- Calculate Rank Data Script -->
-<script>
-  let xp = <%= user.xp %>;
-  let currRank;
-  let rankUp;
-  let remain;
 
   let ranks = [
     {"Digital Noob": 0}, // index 0
@@ -254,51 +281,157 @@
     {"Master Digital Crafter": 800} // index 12
   ]
 
-  // Get current rank
+  // Global old variables
+  let currRank;
+  let rankUp;
+  let remain;
+  let goal;
+  let total;
+  let progress;
+  let percent;
   let indexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12]
-  if (xp < 800) {
-    for(var i = 0; i < ranks.length; i++) {
-      for (let rank in ranks[i]) {
-        let nextIndex = indexes[i];
-        for (let nextRank in ranks[nextIndex]) {
-          if (xp >= ranks[i][rank] && xp < ranks[nextIndex][nextRank]) {
-            currRank = rank;
-            currRankXP = ranks[i][rank]
-            // Calculate xp till next Rank
-            if (i < 12) {
-              i++;
-              let nextRank = ranks[i];
-              for (let r in nextRank) {
-                  let goal = nextRank[r];
-                  rankUp = r;
-                  remain = goal - xp;
-                  // Calculate progress bar
-                  let total = goal - currRankXP;
-                  let progress = xp - currRankXP;
-                  let percent = (progress/total)*100;
-                  let elem = document.getElementById("myBar");
-                  elem.style.height = percent + '%';
-                  document.getElementById('percent').innerHTML = progress + '|' + total;
+
+  // Initial calculate from 0 to current XP
+  function calculate() {
+    // Get current rank
+    if (xp < 800) {
+      for(var i = 0; i < ranks.length; i++) {
+        for (let rank in ranks[i]) {
+          let nextIndex = indexes[i];
+          // Gets rank after current rank
+          for (let nextRank in ranks[nextIndex]) {
+            // Verifies current XP is > currentRank xp level && current XP < nextRank xp level
+            if (xp >= ranks[i][rank] && xp < ranks[nextIndex][nextRank]) {
+              // Sets global old variables
+              currRank = rank;
+              currRankXP = ranks[i][rank]
+              // Calculate xp till next Rank
+              if (i < 12) {
+                i++;
+                let nextRank = ranks[i];
+                for (let r in nextRank) {
+                    goal = nextRank[r];
+                    rankUp = r;
+                    remain = goal - xp;
+                    // Calculate progress bar
+                    total = goal - currRankXP;
+                    progress = xp - currRankXP;
+                    percent = (progress/total)*100;
+                    let elem = document.getElementById("myBar");
+                    elem.style.height = percent + '%';
+                    document.getElementById('percent').innerHTML = progress + '|' + total;
+                }
               }
             }
           }
         }
       }
+    } else {
+      // Display data for max level
+      document.getElementById('percent').innerHTML = '800|800';
+      currRank = "Master Digital Crafter";
+      remain = 0;
+      rankUp = 'No higher Rank, Good Job!';
+      let elem = document.getElementById("myBar");
+      let percent = 100;
+      elem.style.height = percent + '%';
     }
-  } else {
-    // Display data for max level
-    document.getElementById('percent').innerHTML = '800|800';
-    currRank = "Master Digital Crafter";
-    remain = 0;
-    rankUp = 'No higher Rank, Good Job!';
-    let elem = document.getElementById("myBar");
-    let percent = 100;
-    elem.style.height = percent + '%';
+
+    // Display Data
+    document.getElementById('userRank').innerHTML = currRank;
+    document.getElementById('XP-Till').innerHTML = remain + 'XP till your next Rank: ' + rankUp;
   }
 
-  // Display Data
-  document.getElementById('userRank').innerHTML = currRank;
-  document.getElementById('XP-Till').innerHTML = remain + 'XP till your next Rank: ' + rankUp;
+  // Re calculate recaculates all the data from oldXP + addxp to newxp
+  function reCalculate(addXP) {
+    let newXP = xp + parseInt(addXP);
+    console.log(newXP);
+    // Get current rank
+    if (newXP < 800) {
+      for(var i = 0; i < ranks.length; i++) {
+        for (let rank in ranks[i]) {
+          let nextIndex = indexes[i];
+          for (let nextRank in ranks[nextIndex]) {
+            if (newXP >= ranks[i][rank] && newXP < ranks[nextIndex][nextRank]) {
+              let newCurrRank = rank;
+              let newCurrRankXP = ranks[i][rank]
+              // Calculate xp till next Rank
+              if (i < 12) {
+                i++;
+                let newNextRank = ranks[i];
+                for (let r in newNextRank) {
+                  let newRankUp = r;
+                  let newPercent;
+                  let diff = addXP;
+                  let newProgress = progress+diff
+                  let newRemain;
+                  let newGoal;
+                  let newTotal;
+                  // If new Progress doesnt go over current total
+                  if (newProgress < total) {
+                    // Set new percent and new remain
+                    let diffPercent=(diff/total)*100;
+                    newRemain = remain - diff;
+                    newTotal = total;
+                    let elem = document.getElementById("myBar");
+                    newPercent = percent + diffPercent;
+                    elem.style.height = newPercent + "%";
+                    document.getElementById('percent').innerHTML = newProgress + "|" + total;
+                    // Update Display with new Data
+                    document.getElementById('userXP').innerHTML = "XP: " + newXP;
+                    document.getElementById('XP-Till').innerHTML = newRemain + "XP till your next Rank: " + rankUp;
+                    document.getElementById('userRank').innerHTML = currRank;
+                  // If new progress goes over current total
+                  } else if (newProgress >= total) {
+                    // Set new variables
+                    newGoal = newNextRank[r];
+                    newTotal = newGoal - newCurrRankXP;
+                    newProgress = newXP - newCurrRankXP;
+                    newRemain = newTotal - newProgress;
+                    // Update percent from current percent to new percent
+	                  let elem = document.getElementById("myBar");
+                    newPercent = Math.round((newProgress/newTotal)*100);
+                    elem.style.height = newPercent + "%";
+                    // Adds 1 to progress till progress == total
+                    let progressDiff = total-progress;
+                    document.getElementById('percent').innerHTML = newProgress + "|" + newTotal;
+                    // Update Display with new Data
+                    document.getElementById('XP-Till').innerHTML = newRemain + "XP till your next Rank: " + newRankUp;
+                    document.getElementById('userXP').innerHTML = "XP: " + newXP;
+                    document.getElementById('userRank').innerHTML = newCurrRank;
+                    document.getElementById('percent').innerHTML = newProgress + "|" + newTotal;
+                  }
+                  // Set Main Variables to new values
+                  currRank = newCurrRank;
+        	        rankUp = newRankUp;
+                  remain = newRemain;
+      	          goal = newGoal;
+      	          total = newTotal;
+                  progress = newProgress;
+                  percent = newPercent;
+                  xp = newXP;
+                }
+              }
+            }
+          }
+        }
+      }
+    } else {
+      // Display data for max level
+      document.getElementById('percent').innerHTML = '800|800';
+      currRank = "Master Digital Crafter";
+      remain = 0;
+      xp = 800;
+      rankUp = 'No higher Rank, Good Job!';
+      let elem = document.getElementById("myBar");
+      let percent = 100;
+      elem.style.height = percent + '%';
+      // Display Data
+      document.getElementById('userXP').innerHTML = "XP: " + xp;
+      document.getElementById('userRank').innerHTML = currRank;
+      document.getElementById('XP-Till').innerHTML = remain + 'XP till your next Rank: ' + rankUp;
+    }
+  }
 
   function redirect(id) {
     let url = '/users/quests?id=' + encodeURIComponent(id);

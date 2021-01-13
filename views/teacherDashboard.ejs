@@ -40,6 +40,20 @@
     margin-top: 10px;
     margin-right: 15px;
   }
+  .course-container {
+    position: absolute;
+    left: 1000px;
+    background: rgba(0, 0, 0, .2);
+    border-radius: 24px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, .2);
+  }
+  .course-content {
+    margin-left: 15px;
+    margin-top: 10px;
+    margin-right: 15px;
+    max-width: 200px;
+  }
   .quest {
     color: #e05f3a;
   }
@@ -66,7 +80,7 @@
   }
   .buttons-container {
     position: absolute;
-    top: 425px;
+    top: 380px;
     right: 180px;
   }
   .button-content {
@@ -145,17 +159,9 @@
       <button onClick='passData()' class='button-content btn btn-outline-info btn-sm'>Edit</button>
       <a href="https://github.com/Braeden57/XP-System/issues" target="_blank" class='button-content btn btn-outline-info btn-sm'>Report Bug</a>
       <button class="button-content btn btn-outline-info btn-sm" data-toggle="modal" data-target="#createQuest">New Quest</button>
+      <button class="button-content btn btn-outline-info btn-sm" data-toggle="modal" data-target="#createClass">New Class</button>
     </div>
   </div>
-
-  <!-- Passing user _id to edit page script -->
-  <script>
-    function passData() {
-      let url = '/users/edit?name=' + encodeURIComponent('<%= user._id %>');
-
-      document.location.href = url;
-    }
-  </script>
 </div>
 <br>
 
@@ -192,7 +198,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel"</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Add XP</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -203,10 +209,6 @@
             <input id='_id_add' type='text' name='_id_add' value='' style='display: none'></input>
             <input id="current_xp" type="text" name="current_xp" value="" style="display: none"></input>
           </div>
-          <div>
-            <p>Minimum: 1</p>
-            <p>Maximum: 50</p>
-          </div>
           <div class="form-group">
             <label for="amount">Amount</label>
             <input
@@ -214,7 +216,6 @@
               name="amount"
               type="number"
               min="1"
-              max="50"
               value=""
               class="form-control"
               >
@@ -236,7 +237,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="createQuestLabel"</h5>
+        <h5 class="modal-title" id="createQuestLabel">Create Quest</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -309,68 +310,63 @@
   </div>
 </div>
 
-<script>
-  // Creates unique ID
-  function makeid(length) {
-    var result = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  }
-
-  // Create Div
-  function createDiv(type, message) {
-    let id = makeid(8);
-
-    if (type == 'error') {
-      document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none;" class="alert alert-warning alert-dismissible fade show" role="alert">';
-    }
-    if (type == 'message') {
-      document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none;" class="alert alert-info alert-dismissible fade show" role="alert">';
-    }
-    document.getElementById('new-div-'+id).innerHTML += '<div id="message'+id+'">'+message+'</div>';
-    document.getElementById('new-div-'+id).innerHTML += '<button id="close-btn-'+id+'" class="close" data-dismiss="alert" aria-label="Close"></button>';
-    document.getElementById('close-btn-'+id).innerHTML += '<span aria-hidden="true">&times;</span>';
-    document.getElementById('new-div-'+id).style.display = "block";
-  }
-
-  // Pass name to Modal
-  function passName(name, xp, member_id) {
-    if (xp < 800) {
-      document.getElementById("exampleModalLabel").innerHTML = "Give " + name + " XP";
-      document.getElementById("_id_add").value = member_id;
-      document.getElementById("current_xp").value = xp;
-      $("#exampleModal").modal()
-    }
-    if (xp >= 800) {
-      // Construct and show Max XP Alert
-      message = name + ' has reached max XP!';
-      createDiv('message', message);
-    }
-  }
-
-  // Catching url Parameters
-  window.onload = function () {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const successRate = urlParams.get('successRate')
-    if(successRate == 'addXP > 50') {
-      createDiv('error', "Can't add more than 50 XP")
-    }
-    if(successRate == 'addXP <= 0') {
-      createDiv('error', "XP Must be Greater than 0");
-    }
-    if(parseInt(successRate) > 0 && parseInt(successRate) < 50 || parseInt(successRate) == 50) {
-      createDiv('message', "Gave " + successRate + "XP to a Student");
-    }
-    if(successRate == 'createdQuest') {
-      createDiv('message', "Successfully Created Quest");
-    }
-  }
-</script>
+<!-- Create Class Modal -->
+<div class="modal fade" id="createClass" tabindex="-1" role="dialog" aria-labelledby="createClassLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createClassLabel">Create Class</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="/users/createClass" method="POST">
+          <div>
+            <label for="name">Class Name</label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              value=""
+              class="form-control"
+              required
+            >
+          </div>
+          <div>
+            <label for="description">Class Description</label>
+            <textarea
+              id="description"
+              name="description"
+              value=""
+              class="form-control"
+              required
+            ></textarea>
+          </div>
+          <div>
+            <label for="grade">Grade</label>
+            <input
+              id="grade"
+              name="grade"
+              type="number"
+              min="8"
+              max="12"
+              value=""
+              class="form-control"
+              required
+            >
+          </div>
+          <button type="submit" class="btn btn-primary">
+            Create Class
+          </button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="members-container">
   <!-- List of all site students (not teachers) -->
@@ -442,13 +438,126 @@
   <!-- List of Quests -->
   <div class='quest-content'>
     <h2>All Quests</h2>
+    <ul>
     <% quests.forEach(function (quest) { %>
-      <p class='quest'><%= quest.title %></p>
+      <li><button class='list-button btn btn-outline-success mt-2' onclick="redirect('<%= quest._id %>')"><%= quest.title %></button></li>
+    <% }) %>
+    </ul>
+  </div>
+</div>
+
+<div class="course-container">
+  <!-- List of Courses -->
+  <div class='course-content'>
+    <h2>All Courses</h2>
+    <% courses.forEach(function (course) { %>
+      <div class='course'>
+        <p><%= course.name %>: Grade <%= course.grade %></p>
+      </div>
     <% }) %>
   </div>
+</div>
 
-<!-- Script for show/hide user profile data -->
+<script src="/socket.io/socket.io.js"></script>
 <script>
+  let socket = io.connect('http://localhost:5000');
+
+  // Creates unique ID
+  function makeid(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
+  function passData() {
+    let url = '/users/edit?name=' + encodeURIComponent('<%= user._id %>');
+
+    document.location.href = url;
+  }
+
+  // Create Div
+  function createDiv(type, message) {
+    let id = makeid(8);
+
+    if (type == 'error') {
+      document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none;" class="alert alert-warning alert-dismissible fade show" role="alert">';
+    }
+    if (type == 'message') {
+      document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none;" class="alert alert-info alert-dismissible fade show" role="alert">';
+    }
+    document.getElementById('new-div-'+id).innerHTML += '<div id="message'+id+'">'+message+'</div>';
+    document.getElementById('new-div-'+id).innerHTML += '<button id="close-btn-'+id+'" class="close" data-dismiss="alert" aria-label="Close"></button>';
+    document.getElementById('close-btn-'+id).innerHTML += '<span aria-hidden="true">&times;</span>';
+    document.getElementById('new-div-'+id).style.display = "block";
+  }
+
+  // Pass name to Modal
+  function passName(name, xp, member_id) {
+    if (xp < 800) {
+      document.getElementById("exampleModalLabel").innerHTML = "Give " + name + " XP";
+      document.getElementById("_id_add").value = member_id;
+      document.getElementById("current_xp").value = xp;
+      $("#exampleModal").modal()
+    }
+    if (xp >= 800) {
+      // Construct and show Max XP Alert
+      message = name + ' has reached max XP!';
+      createDiv('message', message);
+    }
+  }
+
+  let getParameterByName = function() {
+    let queries = location.search.substring(1).split('&'),
+        processed = {};
+    for (let query of queries) {
+        let [name, value] = query.split('=');
+        processed[decodeURIComponent(name)] = value? decodeURIComponent(value) : '';
+    }
+
+    return function(name) {
+        if (typeof processed[name] !== 'undefined')
+            return processed[name];
+        else
+            return null;
+    };
+  }();
+
+  function updateXP(addXP, id) {
+    let data = {
+      userID: id,
+      addXP: addXP
+    }
+    socket.emit('add:xp', data);
+  }
+
+  // Catching url Parameters
+  window.onload = function () {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const successRate = urlParams.get('successRate')
+    if(successRate == 'addXP > 50') {
+      createDiv('error', "Can't add more than 50 XP")
+    }
+    if(successRate == 'addXP <= 0') {
+      createDiv('error', "XP Must be Greater than 0");
+    }
+    if(parseInt(successRate) > 0) {
+      createDiv('message', "Gave " + successRate + "XP to a Student");
+      updateXP(successRate, getParameterByName('id'));
+    }
+    if(successRate == 'createdQuest') {
+      createDiv('message', "Successfully Created Quest");
+    }
+    if(successRate == 'createdClass') {
+      createDiv('message', "Successfully created Course");
+    }
+  }
+
+  // Script for show/hide user profile data
   function openProfile(id) {
     let state = document.getElementById(id).style.display;
     if (state == "block") {
@@ -456,5 +565,12 @@
     } else {
       document.getElementById(id).style.display = 'block';
     }
+  }
+
+  // Script for redirecting to selected Quest
+  function redirect(id) {
+    let url = '/users/quests?id=' + encodeURIComponent(id);
+
+    document.location.href = url;
   }
 </script>
