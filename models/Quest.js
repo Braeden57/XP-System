@@ -5,10 +5,6 @@ const QuestSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  campaign: {
-    type: String,
-    required: true
-  },
   expiry: {
     type: Date,
     required: true
@@ -22,7 +18,12 @@ const QuestSchema = new mongoose.Schema({
     required: true
   },
   referenceClass: {
-    type: [String]
+    type: String,
+    required: true
+  },
+  campaign: {
+    type: String,
+    required: true
   }
 });
 

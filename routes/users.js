@@ -122,7 +122,7 @@ router.post('/deleteUser', (req, res, next) => {
 
 // Create Quest
 router.post('/createQuest', (req, res, next) => {
-  const { title, amount, expiry, instructions, campaign} = req.body;
+  const { title, amount, expiry, instructions, course, campaign} = req.body;
 
   let errors = [];
 
@@ -133,21 +133,24 @@ router.post('/createQuest', (req, res, next) => {
       // Redirect to dashboard page with errors
       res.render('dashboard', {
         errors,
-        name,
-        email,
-        password,
-        password2
+        title,
+        amount,
+        expiry,
+        instructions,
+        course,
+        campaign
       });
     } else {
 
       try {
-        // Creates new User Object
+        // Creates new Quest Object
         const newQuest = new Quest({
           title: title,
-          campaign: campaign,
           expiry: expiry,
           xp: amount,
-          instruction: instructions
+          instruction: instructions,
+          referenceClass: course,
+          campaign: campaign
         });
         newQuest
           .save()

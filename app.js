@@ -72,8 +72,6 @@ const server = app.listen(PORT, function() {
 let io = socket(server);
 
 io.on('connection', function(socket) {
-  console.log('connected');
-
   socket.on('add:xp', function(data) {
     io.sockets.emit("added:xp", data);
   });

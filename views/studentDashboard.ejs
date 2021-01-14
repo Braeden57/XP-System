@@ -18,7 +18,11 @@
     margin-left: 10px;
     margin-top: 10px;
   }
-
+  #error-noClass {
+    padding: 15px;
+    margin-top: 5px;
+    margin-left: 22%;
+  }
   #option1 {
     width: 50px;
   }
@@ -159,52 +163,20 @@
 </div>
 
 <div class="quest-all">
-  <h1 id="quest-title">Quests</h1>
+  <h1 id="quest-title">Courses</h1>
   <div class='quests-container'>
     <div class='quest-buttons'>
-      <div class="btn-group btn-group-toggle" data-toggle="buttons">
-        <label onClick="showHTML()" class="menu-buttons btn btn-info active">
-          <input type="radio" name="options" id="option1" autocomplete="off" checked> HTML
-        </label>
-        <label onClick="showCSS()" class="menu-buttons btn btn-info">
-          <input type="radio" name="options" id="option2" autocomplete="off"> CSS
-        </label>
-        <label onClick="showJS()" class="menu-buttons btn btn-info">
-          <input type="radio" name="options" id="option3" autocomplete="off"> JavaScript
-        </label>
-      </div>
-    </div>
-    <div class='quests-content'>
-      <div style="display: none;" id="HTML-Display">
-        <ul>
-          <% quests.forEach(function (quest) { %>
-            <% if(quest.campaign == "HTML") { %>
-              <!-- Creates Quest Button link -->
-              <li><button class='list-button btn btn-outline-success mt-2' onclick="redirect('<%= quest._id %>')"><%= quest.title %></button></li>
-            <% } %>
-          <% }) %>
-        </ul>
-      </div>
-      <div style="display: none;" id="CSS-Display">
-        <ul>
-          <% quests.forEach(function (quest) { %>
-            <% if(quest.campaign == "CSS") { %>
-              <!-- Creates Quest Button link -->
-              <li><button class='list-button btn btn-outline-success mt-2' onclick="redirect('<%= quest._id %>')"><%= quest.title %></button></li>
-              <% } %>
-          <% }) %>
-        </ul>
-      </div>
-      <div style="display: none;" id="JS-Display">
-        <ul>
-          <% quests.forEach(function (quest) { %>
-            <% if(quest.campaign == "JS") { %>
-              <!-- Creates Quest Button link -->
-              <li><button class='list-button btn btn-outline-success mt-2' onclick="redirect('<%= quest._id %>')"><%= quest.title %></button></li>
-            <% } %>
-          <% }) %>
-        </ul>
-      </div>
+      <% if(courses.length == 0) {%>
+        <h2 id="error-noClass"">There are no classes yet :(</h2>
+      <% } else if(courses.length > 0) { %>
+        <select id="classes" onchange="showQuest()" class="form-control" style="margin-right: 5px;">
+        <option>--Please Select a Class--</option>
+        <% courses.forEach(function (course) { %>
+          <option value="<%= course.name %>"><%= course.name %></option>
+        <% }) %>
+        </select>
+      <% } %>
+      <div><ul id="class-quests"></ul></div>
     </div>
   </div>
 </div>
@@ -219,6 +191,16 @@
     }
   });
 
+  // Global old variables
+  let currRank;
+  let rankUp;
+  let remain;
+  let goal;
+  let total;
+  let progress;
+  let percent;
+  let indexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12]
+
   window.onload = function() {
     calculate();
   }
@@ -232,36 +214,28 @@
     document.location.href = url;
   }
 
-  function showHTML() {
-    let state = document.getElementById('HTML-Display').style.display;
-    if (state == "block") {
-      document.getElementById('HTML-Display').style.display = 'none';
-    } else {
-      document.getElementById('JS-Display').style.display = 'none';
-      document.getElementById('CSS-Display').style.display = 'none';
-      document.getElementById('HTML-Display').style.display = 'block';
-    }
-  }
+  let allQuests = [];
+  let questObj;
+  <% quests.forEach(function (quest) { %>
+    questObj = {
+      _id: "<%= quest._id %>",
+      title: "<%= quest.title %>",
+      expiry: "<%= quest.expiry %>",
+      xp: <%= quest.xp %>,
+      instruction: "<%= quest.instruction %>",
+      referenceClass: "<%= quest.referenceClass %>",
+      campaign: "<%= quest.campaign %>",
+    };
+    allQuests.push(questObj);
+  <% }) %>
 
-  function showCSS() {
-    let state = document.getElementById('CSS-Display').style.display;
-    if (state == "block") {
-      document.getElementById('CSS-Display').style.display = 'none';
-    } else {
-      document.getElementById('HTML-Display').style.display = 'none';
-      document.getElementById('JS-Display').style.display = 'none';
-      document.getElementById('CSS-Display').style.display = 'block';
-    }
-  }
-
-  function showJS() {
-    let state = document.getElementById('JS-Display').style.display;
-    if (state == "block") {
-      document.getElementById('JS-Display').style.display = 'none';
-    } else {
-      document.getElementById('HTML-Display').style.display = 'none';
-      document.getElementById('CSS-Display').style.display = 'none';
-      document.getElementById('JS-Display').style.display = 'block';
+  function showQuest() {
+    document.getElementById('class-quests').innerHTML = "";
+    let className = document.getElementById('classes').value;
+    for(let i = 0; i < allQuests.length; i++) {
+      if (allQuests[i]["referenceClass"] == className) {
+        document.getElementById('class-quests').innerHTML += `<li><button class='list-button btn btn-outline-success mt-2' onclick="redirect(${allQuests[i]["_id"]})">${allQuests[i]["title"]}</button></li>`;
+      }
     }
   }
 
@@ -280,16 +254,6 @@
     {"Expert Digital Crafter": 648}, // index 11
     {"Master Digital Crafter": 800} // index 12
   ]
-
-  // Global old variables
-  let currRank;
-  let rankUp;
-  let remain;
-  let goal;
-  let total;
-  let progress;
-  let percent;
-  let indexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12]
 
   // Initial calculate from 0 to current XP
   function calculate() {

@@ -12,6 +12,12 @@ const CourseSchema = new mongoose.Schema({
   grade: {
     type: Number,
     required: true
+  },
+  students: {
+    type: [String]
+  },
+  campaigns: {
+    type: [String]
   }
 });
 

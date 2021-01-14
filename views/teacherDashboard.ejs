@@ -290,13 +290,25 @@
             ></textarea>
           </div>
           <div>
-            <label for="campaign">Campaign</label>
-            <select required name="campaign" id="campaign">
-              <option value="">--Please choose an option--</option>
-              <option value="HTML">HTML</option>
-              <option value="CSS">CSS</option>
-              <option value="JS">JavaScript</option>
+            <label for="course">Course/Class</label>
+            <select class="form-control" required name="course" id="course">
+              <option value="">--Please Choose a Class--</option>
+              <% courses.forEach(function(course) { %>
+                <option value="<%= course.name %>"><%= course.name %></option>
+              <% }) %>
             </select>
+          </div>
+          <div>
+            <label for="campaign">Campaign</label>
+            <input
+              id="campaign"
+              name="campaign"
+              type="text"
+              value=""
+              placeholder="New Campaign"
+              class="form-control"
+              required
+            >
           </div>
           <button type="submit" class="btn btn-primary">
             Create Quest
