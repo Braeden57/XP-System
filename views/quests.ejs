@@ -17,16 +17,20 @@
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const id = urlParams.get('id');
-    <% quests.forEach(function (quest) { %>
-      if('<%= quest._id %>' == id) {
-        document.getElementById('div-container').innerHTML += '<div id="quest">';
-        document.getElementById('quest').innerHTML += '<h1 class="title"><%= quest.title %></h1>';
-        document.getElementById('quest').innerHTML += '<h2 class="title">Campaign: <%= quest.campaign %></h2>'
-        document.getElementById('quest').innerHTML += '<p class="info">XP: <%= quest.xp %></p>';
-        document.getElementById('quest').innerHTML += '<p class="info">Expires: <%= quest.expiry %></p>';
-        document.getElementById('quest').innerHTML += '<h3 class="info">Instructions: <%= quest.instruction %></h3>';
-      }
-    <% }) %>
+    <% if(quests.length == 0) { %>
+      document.getElementById('div-container').innerHTML = "<h2>Uh oh, theres no quests :(</h2>";
+    <% } else if(quests.length > 0) { %>
+      <% quests.forEach(function (quest) { %>
+        if('<%= quest._id %>' == id) {
+          document.getElementById('div-container').innerHTML += '<div id="quest">';
+          document.getElementById('quest').innerHTML += '<h1 class="title"><%= quest.title %></h1>';
+          document.getElementById('quest').innerHTML += '<h2 class="title">Campaign: <%= quest.campaign %></h2>'
+          document.getElementById('quest').innerHTML += '<p class="info">XP: <%= quest.xp %></p>';
+          document.getElementById('quest').innerHTML += '<p class="info">Expires: <%= quest.expiry %></p>';
+          document.getElementById('quest').innerHTML += `<h3 class="info">Instructions: <%= quest.instruction %></h3>`;
+        }
+      <% }) %>
+    <% } %>
   }
 </script>
 

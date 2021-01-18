@@ -380,6 +380,33 @@
   </div>
 </div>
 
+<!-- Class Details Modal -->
+<div class="modal fade" id="classDetails" tabindex="-1" role="dialog" aria-labelledby="classDetailsLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="classDetailsLabel">Class Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <label>Name:</label>
+        <h2 id="classDetailName"></h2>
+        <br>
+        <label>Grade:</label>
+        <h3 id="classDetailGrade"></h3>
+        <br>
+        <label>Description:</label>
+        <p id="classDetailDesc"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="members-container">
   <!-- List of all site students (not teachers) -->
   <h2>Studen Members</h2>
@@ -462,17 +489,30 @@
   <!-- List of Courses -->
   <div class='course-content'>
     <h2>All Courses</h2>
+    <ul>
     <% courses.forEach(function (course) { %>
       <div class='course'>
-        <p><%= course.name %>: Grade <%= course.grade %></p>
+        <li><button class="btn btn-outline-success mt-2" onclick="showDetails('<%= course._id %>')"><%= course.name %>: <%= course.grade %></button></li>
       </div>
     <% }) %>
+    </ul>
   </div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
   let socket = io.connect('http://localhost:5000');
+
+  function showDetails(id) {
+    <% courses.forEach(function(course) { %>
+      if('<%=course._id%>' == id) {
+        document.getElementById('classDetailName').innerHTML = '<%= course.name %>';
+        document.getElementById('classDetailGrade').innerHTML = '<%= course.grade %>';
+        document.getElementById('classDetailDesc').innerHTML = '<%= course.description %>';
+        $("#classDetails").modal();
+      }
+    <% }) %>
+  }
 
   // Creates unique ID
   function makeid(length) {
