@@ -4,6 +4,17 @@ School Project
 This school project is for my teacher to have students
 log in and check out their XP and assignments.
 This website application is not available online, this is just a locally run website at our school.
+To create a teacher, it must be done by a site admin. You'll need to create the site admin in the
+database in a collection called `users` and set insert a document formatted as shown:
+`
+{
+  "_id": your generated id,
+  "role": "Admin",
+  "name": your name,
+  "email": your email,
+  "password": your encrypted password
+}
+`
 
 ### Requirements :
 1.  [Node.js](https://nodejs.org/en/)
