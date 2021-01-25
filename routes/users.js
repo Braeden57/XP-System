@@ -224,7 +224,7 @@ router.post('/addXP', (req, res, next) => {
 // Edit
 router.post('/edit', upload.single('image'), (req, res, next) => {
   // Passes image path to defaultImage Model
-  imagePath = __dirname + '/uploads/default-image';
+  let imagePath = __dirname + '/uploads/default-image';
   module.exports = {
     defaultPath: imagePath
   }
@@ -426,7 +426,7 @@ router.post('/edit', upload.single('image'), (req, res, next) => {
 // Register Teacher
 router.post('/registerTeacher', upload.single('image'), (req, res, next) => {
   // Passes image path to defaultImage Model
-  imagePath = __dirname + '/uploads/default-image';
+  let imagePath = __dirname + '/uploads/default-image';
   module.exports = {
     defaultPath: imagePath
   }
@@ -565,7 +565,7 @@ router.post('/registerTeacher', upload.single('image'), (req, res, next) => {
 // Register
 router.post('/register', upload.single('image'), (req, res, next) => {
   // Passes image path to defaultImage Model
-  imagePath = __dirname + '/uploads/default-image';
+  let imagePath = __dirname + '/uploads/default-image';
   module.exports = {
     defaultPath: imagePath
   }
