@@ -1,8 +1,17 @@
 # XP-System
 
-This school project is for my teacher to have students log in and check out their XP and assignments. This website application is not available online, this is just a locally run website at our school. To create a teacher, it must be done by a site admin.
+This school project is for my teacher to have students log in and check out their XP and assignments.
+This website application is not available online, this is just a locally run website at our school.
+To create a teacher, it must be done by a site admin.
 
-You'll need to create the site admin in the database in a collection called users and insert a document via MongoDB Compass.Format the document as shown: `{ "role": "Admin", "name": your name, "email": your email, "password": your encrypted password }`
+You'll need to create the site admin in the database in a collection called users,
+and insert a document via MongoDB Compass. Format the document as shown: 
+`{
+  "role": "Admin",
+  "name": your name,
+  "email": your email,
+  "password": your encrypted password
+ }`
 
 Replace `your name` with the name you specify, `your email` with the email you would like to use to login,
 and replace `your encrypted password` with your [Encrypted Password](#Encrypting Your Password)
