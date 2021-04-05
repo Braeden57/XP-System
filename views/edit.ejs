@@ -1,8 +1,9 @@
+<div style="margin: 15px;" id="div-container"></div>
 <div class="row mt-5">
   <div class="col-md-6 m-auto">
     <div class="card card-body">
       <h1 class="text-center mb-3">
-        <i class="fas fa-user-plus"></i> Edit Account
+        <i class="fas fa-user-cog"></i> Edit Account
       </h1>
       <% include ./partials/messages %>
       <form action="/users/edit" method="POST" enctype="multipart/form-data">
@@ -33,7 +34,7 @@
           />
         </div>
         <div class='form-group'>
-          <label for='image'>Upload Profile Picture</label>
+          <label for='image'>Change Profile Picture</label>
           <input class='form-control-file' type="file" id="image" name="image" value="">
         </div>
         <div class="form-group">
@@ -65,3 +66,33 @@
     </div>
   </div>
 </div>
+<script>
+  // Creates unique ID
+  function makeid(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+  // Create Div
+  // Stole this function from teacherDashboard to make a single FYI note
+  // I know its pretty dumb
+  function createDiv(type, message) {
+    let id = makeid(8);
+
+    if (type == 'error') {
+      document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none;" class="alert alert-warning alert-dismissible fade show" role="alert">';
+    }
+    if (type == 'message') {
+      document.getElementById('div-container').innerHTML += '<div id="new-div-'+id+'" style="display: none;" class="alert alert-info alert-dismissible fade show" role="alert">';
+    }
+    document.getElementById('new-div-'+id).innerHTML += '<div id="message'+id+'">'+message+'</div>';
+    document.getElementById('new-div-'+id).innerHTML += '<button id="close-btn-'+id+'" class="close" data-dismiss="alert" aria-label="Close"></button>';
+    document.getElementById('close-btn-'+id).innerHTML += '<span aria-hidden="true">&times;</span>';
+    document.getElementById('new-div-'+id).style.display = "block";
+  }
+  createDiv('message', 'FYI: Only enter the fields you want to change');
+</script>
