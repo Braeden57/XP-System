@@ -267,7 +267,7 @@
   function calculate() {
     // Get current rank
     if (xp < 800) {
-      for(var i = 0; i < ranks.length; i++) {
+      for(let i = 0; i < ranks.length; i++) {
         for (let rank in ranks[i]) {
           let nextIndex = indexes[i];
           // Gets rank after current rank
@@ -321,7 +321,7 @@
     let newXP = xp + parseInt(addXP);
     // Get current rank
     if (newXP < 800) {
-      for(var i = 0; i < ranks.length; i++) {
+      for(let i = 0; i < ranks.length; i++) {
         for (let rank in ranks[i]) {
           let nextIndex = indexes[i];
           // Gets rank after current rank
