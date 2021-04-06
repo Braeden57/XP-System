@@ -298,12 +298,13 @@
           }
         }
       }
-    } else if(xp == 800 || xp > 800) {
+    } else if(xp >= 800) {
       console.log('You are a coding master!');
       // Display data for max level
       document.getElementById('percent').innerHTML = '800|800';
       currRank = "Master Digital Crafter";
       remain = 0;
+      xp = 800;
       rankUp = 'No higher Rank, Good Job!';
       let elem = document.getElementById("myBar");
       let percent = 100;
@@ -393,7 +394,7 @@
           }
         }
       }
-    } else {
+    } else if (xp >= 800) {
       console.log('You are a coding master!')
       // Display data for max level
       document.getElementById('percent').innerHTML = '800|800';
