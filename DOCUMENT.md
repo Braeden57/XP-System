@@ -22,19 +22,19 @@ Ranks are a name you get based on your XP (Only for students).
 Gaining more XP will get you higher ranks.
 
 List of Ranks and XP value:
-Digital Noob: 0 XP,
-Digital Novice: 48 XP,
-Digital Novice II: 100 XP,
-Digital Amature: 148 XP,
-Digital Amature II: 200 XP,
-Digital Apprentice: 248 XP,
-Digital Apprentice II: 300 XP,
-Digital Journeyman: 396 XP,
-Digital Journeyman II: 476 XP,
-Digital Journeyman III: 532 XP,
-Digital Crafter: 580 XP,
-Expert Digital Crafter: 648 XP,
-Master Digital Crafter: 800 XP
+1. Digital Noob: 0 XP,
+2. Digital Novice: 48 XP,
+3. Digital Novice II: 100 XP,
+4. Digital Amature: 148 XP,
+5. Digital Amature II: 200 XP,
+6. Digital Apprentice: 248 XP,
+7. Digital Apprentice II: 300 XP,
+8. Digital Journeyman: 396 XP,
+9. Digital Journeyman II: 476 XP,
+10. Digital Journeyman III: 532 XP,
+11. Digital Crafter: 580 XP,
+12. Expert Digital Crafter: 648 XP,
+13. Master Digital Crafter: 800 XP
 
 ### Logging in
 To login as a teacher, student or site Admin. Simply go to the main page and click the `Login` button.
