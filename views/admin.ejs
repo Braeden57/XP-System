@@ -178,6 +178,12 @@
     if(successRate == 'deletedUser') {
       createDiv('message', "Successfully Deleted User");
     }
+    if(successRate == 'deleteFailed') {
+      createDiv('error', "Failed to delete User");
+    }
+    if(successRate == 'notFoundError') {
+      createDiv('error', "User not found");
+    }
   }
 </script>
 
@@ -204,7 +210,7 @@
     let indexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12]
 
     // Students should't be on this page sooooo...
-    console.log("Students Also Shouldnt be here");
+    console.log("Students also shouldnt be here");
   </script>
 
   <!-- Alert container -->
@@ -221,8 +227,8 @@
           </button>
         </div>
         <div class="modal-body">
-          <form action="/users/deleteUser" method="POST" enctype="multipart/form-data">
-            <input id='delete_id' type='text' name='delete_id' value='' style='display: none'></input>
+          <form action="/users/deleteUser" method="POST">
+            <input id='deleteEmail' type='text' name='deleteEmail' value='' style='display: none'></input>
             <button type="submit" class="btn btn-primary btn-block">
               Yes, Continue and Delete This User
             </button>
@@ -308,6 +314,15 @@
     </div>
   </div>
 
+  <script>
+    // Delete User Function
+    function deleteUser(email) {
+      console.log(email);
+      document.getElementById('deleteEmail').value = email;
+      openModal("#warningModal");
+    }
+  </script>
+
   <!-- List of all site students and teachers -->
   <div class='members'>
     <h2>All Site Members</h2>
@@ -330,7 +345,7 @@
               <p><%= member.role %></p>
 
               <!-- Delete User Option -->
-              <button id="delete-btn" onClick='deleteUser("<%= member._id %>")' type="button" class="btn btn-outline-warning btn-sm">
+              <button id="delete-btn" onClick='deleteUser("<%= member.email %>")' type="button" class="btn btn-outline-warning btn-sm">
                 Delete User
               </button>
             </div>
@@ -363,13 +378,6 @@
 
               // Display Rank
               document.getElementById('userRank-<%= member.id %>').innerHTML = currRank;
-
-              // Delete User Function
-              function deleteUser(id) {
-                document.getElementById('delete_id').value = id;
-                openModal("#warningModal");
-              }
-
             </script>
           </div>
         <% } %>
@@ -386,7 +394,7 @@
               <p><%= member.role %></p>
 
               <!-- Delete User Option -->
-              <button id="delete-btn" onClick='deleteUser("<%= member._id %>")' type="button" class="btn btn-outline-warning btn-sm">
+              <button id="delete-btn" onClick='deleteUser("<%= member.email %>")' type="button" class="btn btn-outline-warning btn-sm">
                 Delete User
               </button>
             </div>

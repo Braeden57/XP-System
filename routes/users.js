@@ -101,23 +101,41 @@ router.post('/createClass', (req, res, next) => {
 
 // Delete User
 router.post('/deleteUser', (req, res, next) => {
-  const id = req.body.delete_id;
+  const { deleteEmail } = req.body;
 
   // Deletes User
-  MongoClient.connect(url, {
-    useUnifiedTopology: true,
-    useNewUrlParser: true}, function(err, db) {
-      if (err) throw err;
-      let dbo = db.db("XPmockDB");
-      dbo.collection("students").deleteOne({  _id: ObjectId(id) }, function(err, obj) {
-        if (err) throw err;
-        db.close();
-      });
-      // Takes to Dahsboard on success
-      let value = encodeURIComponent('deletedUser');
+  User.findOne({ email: deleteEmail }).then(user => {
+    if (user) {
+      MongoClient.connect(url, {
+        useUnifiedTopology: true,
+        useNewUrlParser: true}, async function(err, db) {
+          if (err) throw err;
+          const dbo = db.db("XPmockDB");
+          const users = dbo.collection("users");
+          const query = { email: deleteEmail };
+          const result = await users.deleteOne(query);
+          if(result.deletedCount === 1) {
+            console.log('Successfully deleted Document.');
+
+            // Takes to Dahsboard on success
+            let value = encodeURIComponent('deletedUser');
+            res.redirect('/dashboard?successRate=' + value);
+          } else {
+            console.error("No Documents matched the query. Deleted 0 documents.")
+
+            // Takes to Dahsboard on failure
+            let value = encodeURIComponent('deleteFailed');
+            res.redirect('/dashboard?successRate=' + value);
+          }
+        }
+      );
+    } else {
+      console.warn('User not found')
+      // Takes to Dashboard on failure
+      let value = encodeURIComponent('notFoundError');
       res.redirect('/dashboard?successRate=' + value);
     }
-  );
+  })
 });
 
 // Create Quest
