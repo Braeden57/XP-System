@@ -11,7 +11,7 @@ To create a Teacher:
 
 1. Have your site Admin login
 2. To the right of the page is the main panel. Click the `Create Teacher` button.
-![create teacher button](/DocsPrieview/teacher-create.png)
+![create teacher button](DocsPrieview/teacher-create.png)
 
 ### Setting up site Admin
 There is no default site admin so you will need to set one up.
