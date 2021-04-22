@@ -11,8 +11,8 @@ Once you have completed the setup and are ready to use the software follow these
 5. [Creating Courses](#Creating-a-course)
 6. [Creating Assignments](#Creating-an-assignment)
 7. [Giving a Student XP](#Giving-XP)
-8. [Editing Accounts][#Editing-accounts]
-9. [Deleting Users][#Deleting-users]
+8. [Editing Accounts](#Editing-accounts)
+9. [Deleting Users](#Deleting-users)
 10. [Viewing Assignments](#Viewing-assignments)
 11. [Logging In](#Logging-in)
 12. [List of ranks](#Ranks)
