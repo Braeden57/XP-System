@@ -3,7 +3,7 @@
 This school project is for my teacher to have students log in and check out their XP and assignments.
 This website application is not available online, this is just a locally run website at our school.
 
-For a full tutorial on website functionality check out `DOCUMENT.md`.
+For a full tutorial on website functionality check out the documenation [here](DOCUMENT.md).
 
 If you'd like to use this yourself, you'll need to create a teacher, it must be done by a site admin.
 
